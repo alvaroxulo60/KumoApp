@@ -3,6 +3,7 @@ package controller;
 import DAO.VideojuegoDAOMysql;
 import exception.AppException;
 import io.Sesion;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -22,8 +23,9 @@ import java.util.stream.Collectors;
 
 public class MainController {
     @FXML private TableView<Videojuego> tablaJuegos;
-    @FXML private TableColumn<Videojuego, String> colTitulo, colDesarrollador, colGeneros, colPlataformas, colEstado;
-    @FXML private TableColumn<Videojuego, Integer> colAnio, colNota;
+    // La columna Nota ahora es String
+    @FXML private TableColumn<Videojuego, String> colTitulo, colDesarrollador, colGeneros, colPlataformas, colEstado, colNota;
+    @FXML private TableColumn<Videojuego, Integer> colAnio;
 
     private final VideojuegoDAOMysql gameDAO = new VideojuegoDAOMysql();
 
@@ -62,7 +64,8 @@ public class MainController {
                         gameDAO.listarPorUsuario(Sesion.getUsuario().getIdUsuario())
                 ));
             } catch (AppException e) {
-                mostrarAlerta("Error", "No se pudieron cargar los juegos: " + e.getMessage());
+                // Platform.runLater evita que la ventana crashee si hay error de carga
+                Platform.runLater(() -> mostrarAlerta("Error al cargar", "Motivo: " + e.getMessage()));
             }
         }
     }

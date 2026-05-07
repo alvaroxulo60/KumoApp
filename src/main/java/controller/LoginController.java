@@ -15,7 +15,6 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        // Configuración para que el Enter en los campos de texto dispare el login
         txtEmail.setOnAction(event -> handleLogin());
         txtPassword.setOnAction(event -> handleLogin());
     }
@@ -35,7 +34,7 @@ public class LoginController {
             List<Usuario> usuarios = userDAO.listarTodos();
 
             Usuario encontrado = usuarios.stream()
-                    .filter(u -> u.getEmail().equalsIgnoreCase(email) && u.getPassword().equals(pass))
+                    .filter(u -> email.equalsIgnoreCase(u.getEmail()) && pass.equals(u.getPassword()))
                     .findFirst()
                     .orElse(null);
 
@@ -46,8 +45,9 @@ public class LoginController {
                 mostrarAlerta("Error de acceso", "Email o contraseña incorrectos.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            mostrarAlerta("Error de conexión", "Error al conectar con la base de datos.");
+            e.printStackTrace(); // Esto imprimirá el error real en la consola roja de tu IDE
+            String causa = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage();
+            mostrarAlerta("Fallo en la aplicación", "Error real al cargar: " + causa);
         }
     }
 

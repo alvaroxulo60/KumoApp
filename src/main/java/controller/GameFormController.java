@@ -59,7 +59,10 @@ public class GameFormController {
         txtTitulo.setText(v.getTitulo());
         txtDesarrollador.setText(v.getDesarrollador());
         txtAnio.setText(String.valueOf(v.getAñoLanzamiento()));
-        txtNota.setText(String.valueOf(v.getNotaPersonal()));
+
+        // Cargamos la nota/reseña como un simple texto
+        txtNota.setText(v.getNotaPersonal() != null ? v.getNotaPersonal() : "");
+
         cbEstado.setValue(v.getEstado() != null ? v.getEstado() : "Pendiente");
 
         // Seleccionar los elementos previos en las listas
@@ -83,7 +86,10 @@ public class GameFormController {
                 v.setTitulo(txtTitulo.getText());
                 v.setDesarrollador(txtDesarrollador.getText());
                 v.setAñoLanzamiento(Integer.parseInt(txtAnio.getText()));
-                v.setNotaPersonal(Integer.parseInt(txtNota.getText()));
+
+                // Guardamos el texto en el objeto
+                v.setNotaPersonal(txtNota.getText());
+
                 v.setEstado(cbEstado.getValue());
 
                 v.setGeneros(new ArrayList<>(lvGeneros.getSelectionModel().getSelectedItems()));
@@ -111,15 +117,11 @@ public class GameFormController {
                 mostrarAlerta("Campos vacíos", "Por favor, rellena título, año y selecciona al menos un género y plataforma.");
                 return false;
             }
+            // Ya no comprobamos si la nota es un número. Solo nos importa el año.
             Integer.parseInt(txtAnio.getText());
-            int nota = Integer.parseInt(txtNota.getText());
-            if(nota < 0 || nota > 10) {
-                mostrarAlerta("Nota inválida", "La nota debe estar entre 0 y 10.");
-                return false;
-            }
             return true;
         } catch (NumberFormatException e) {
-            mostrarAlerta("Error de formato", "El año y la nota deben ser números válidos.");
+            mostrarAlerta("Error de formato", "El año debe ser un número válido.");
             return false;
         }
     }

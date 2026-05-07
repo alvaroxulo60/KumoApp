@@ -12,7 +12,7 @@ public class Videojuego {
     private List<Genero> generos;
 
     // NUEVOS CAMPOS (vienen de la relación usuario_videojuego)
-    private int notaPersonal;
+    private String notaPersonal; // <- Cambiado a String para admitir reseñas
     private String estado;
 
     public Videojuego() {
@@ -35,6 +35,17 @@ public class Videojuego {
         this.generos = genero;
     }
 
+    public Videojuego(int idVideojuego, String titulo, String desarrollador, int añoLanzamiento, List<Plataforma> plataformas, List<Genero> generos, String notaPersonal, String estado) {
+        this.idVideojuego = idVideojuego;
+        this.titulo = titulo;
+        this.desarrollador = desarrollador;
+        this.añoLanzamiento = añoLanzamiento;
+        this.plataformas = plataformas;
+        this.generos = generos;
+        this.notaPersonal = notaPersonal;
+        this.estado = estado;
+    }
+
     public int getIdVideojuego() { return idVideojuego; }
     public String getTitulo() { return titulo; }
     public String getDesarrollador() { return desarrollador; }
@@ -43,7 +54,7 @@ public class Videojuego {
     public List<Genero> getGeneros() { return generos; }
 
     // Nuevos Getters
-    public int getNotaPersonal() { return notaPersonal; }
+    public String getNotaPersonal() { return notaPersonal; }
     public String getEstado() { return estado; }
 
     public void setIdVideojuego(int idVideojuego) { this.idVideojuego = idVideojuego; }
@@ -54,13 +65,13 @@ public class Videojuego {
     public void setGeneros(List<Genero> genero) { this.generos = genero; }
 
     // Nuevos Setters
-    public void setNotaPersonal(int notaPersonal) { this.notaPersonal = notaPersonal; }
+    public void setNotaPersonal(String notaPersonal) { this.notaPersonal = notaPersonal; }
     public void setEstado(String estado) { this.estado = estado; }
 
     @Override
     public String toString() {
         return titulo + ", " + desarrollador + ", " + añoLanzamiento +
                 ". Plataformas: " + plataformas + ". Géneros:" + generos +
-                ". Nota: " + notaPersonal + " (" + estado + ")";
+                ". Nota/Reseña: " + notaPersonal + " (" + estado + ")";
     }
 }

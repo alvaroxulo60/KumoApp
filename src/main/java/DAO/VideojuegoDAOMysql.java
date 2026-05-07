@@ -66,12 +66,11 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                     }
                 }
 
-                // NUEVO: Insertar en la tabla intermedia usuario_videojuego
                 if (io.Sesion.getUsuario() != null) {
                     try (PreparedStatement psUV = con.prepareStatement(sqlInsertUsuVid)) {
                         psUV.setInt(1, io.Sesion.getUsuario().getIdUsuario());
                         psUV.setInt(2, idGenerado);
-                        psUV.setInt(3, videojuego.getNotaPersonal());
+                        psUV.setString(3, videojuego.getNotaPersonal()); // Se manda a la base de datos como String
                         psUV.setString(4, videojuego.getEstado());
                         psUV.executeUpdate();
                     }
@@ -93,7 +92,6 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
     @Override
     public List<Videojuego> listarPorUsuario(int idUsuario) throws AppException {
         List<Videojuego> juegos = new ArrayList<>();
-        // NUEVO: Seleccionar nota_personal y estado desde la tabla intermedia
         String sql = "SELECT v.*, uv.nota_personal, uv.estado FROM videojuego v " +
                 "JOIN usuario_videojuego uv ON v.Id_videojuego = uv.Id_videojuego " +
                 "WHERE uv.Id_usuario = ?";
@@ -104,8 +102,9 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Videojuego v = mapearVideojuegoBasico(rs);
-                    // Mapear los campos personales
-                    v.setNotaPersonal(rs.getInt("nota_personal"));
+
+                    // Se lee de la base de datos como String
+                    v.setNotaPersonal(rs.getString("nota_personal"));
                     v.setEstado(rs.getString("estado"));
 
                     v.setGeneros(obtenerGenerosDeJuego(v.getIdVideojuego()));
@@ -169,10 +168,9 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                     }
                 }
 
-                // NUEVO: Actualizar la nota y estado para este usuario
                 if (io.Sesion.getUsuario() != null) {
                     try (PreparedStatement psUpdUV = con.prepareStatement(sqlUpdateUsuVid)) {
-                        psUpdUV.setInt(1, videojuego.getNotaPersonal());
+                        psUpdUV.setString(1, videojuego.getNotaPersonal()); // Se manda a la base de datos como String
                         psUpdUV.setString(2, videojuego.getEstado());
                         psUpdUV.setInt(3, io.Sesion.getUsuario().getIdUsuario());
                         psUpdUV.setInt(4, videojuego.getIdVideojuego());
@@ -196,8 +194,6 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         try(Connection c = ConexionDB.getInstance();
             PreparedStatement pr4 = c.prepareStatement(sqlVideojuego)) {
 
-            // Las relaciones en tablas intermedias se borrarán solas si tienes configurado ON DELETE CASCADE en la BD.
-            // Si no, deberías borrar primero de usuario_videojuego, videojuego_plataforma, etc.
             pr4.setInt(1, id);
             pr4.executeUpdate();
 
@@ -208,12 +204,12 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     @Override
     public Videojuego videojuegoObtenerPorID(int id) throws AppException, SQLException {
-        return null; // Lo tienes sin implementar / simplificado arriba, lo dejamos así para no sobrecargar
+        return null;
     }
 
     @Override
     public List<Videojuego> listarTodos() throws AppException {
-        return new ArrayList<>(); // Lo tienes simplificado, listarPorUsuario es el que realmente usas
+        return new ArrayList<>();
     }
 
     private List<Genero> obtenerGenerosDeJuego(int idJuego) throws SQLException, AppException {
@@ -253,11 +249,11 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     @Override
     public List<Genero> obtenerTodosLosGeneros() throws AppException, SQLException {
-        return new ArrayList<>(); // Implementado en su propio DAO
+        return new ArrayList<>();
     }
 
     @Override
     public List<Plataforma> obtenerTodasLasPlataformas() throws AppException, SQLException {
-        return new ArrayList<>(); // Implementado en su propio DAO
+        return new ArrayList<>();
     }
 }
