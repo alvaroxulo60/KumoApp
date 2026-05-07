@@ -1,6 +1,8 @@
 package DAO;
 
 import exception.AppException;
+import interfacesDAO.GeneroDAO;
+import interfacesDAO.PlataformaDAO;
 import interfacesDAO.VideojuegoDAO;
 import io.ConexionDB;
 import models.Genero;
@@ -12,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideojuegoDAOMysql implements VideojuegoDAO {
+
+    private final GeneroDAO generoDAO = new GeneroDAOMysql();
+    private final PlataformaDAO plataformaDAO = new PlataformaDAOMysql();
 
 
     @Override
@@ -112,28 +117,8 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     @Override
     public List<Videojuego> listarTodos() throws AppException {
-        String sql = "SELECT \n" +
-                "    v.*, \n" +
-                "    generos.datos_generos,\n" +
-                "    plataformas.datos_plataformas\n" +
-                "FROM videojuego v\n" +
-                "LEFT JOIN (\n" +
-                "    SELECT vg.Id_videojuego, \n" +
-                "           GROUP_CONCAT(CONCAT(g.Id_genero, ':', g.nombre_genero) SEPARATOR ';') AS datos_generos\n" +
-                "    FROM videojuego_genero vg\n" +
-                "    JOIN genero g ON vg.Id_genero = g.Id_genero\n" +
-                "    GROUP BY vg.Id_videojuego\n" +
-                ") generos ON v.Id_videojuego = generos.Id_videojuego\n" +
-                "LEFT JOIN (\n" +
-                "    SELECT vp.Id_videojuego, \n" +
-                "           GROUP_CONCAT(CONCAT(p.Id_plataforma, ':', p.nombre_plataforma) SEPARATOR ';') AS datos_plataformas\n" +
-                "    FROM videojuego_plataforma vp\n" +
-                "    JOIN plataformas p ON vp.Id_plataforma = p.Id_plataforma\n" +
-                "    GROUP BY vp.Id_videojuego\n" +
-                ") plataformas ON v.Id_videojuego = plataformas.Id_videojuego;";
-
-        System.out.println(sql);
-
+        // Consulta mucho más sencilla sin GROUP_CONCAT complejos
+        String sql = "SELECT * FROM videojuego";
         List<Videojuego> videojuegos = new ArrayList<>();
 
         try (Connection connection = ConexionDB.getInstance();
@@ -141,14 +126,53 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
              ResultSet rs = stm.executeQuery(sql)) {
 
             while (rs.next()) {
-                videojuegos.add(mapearVideojuego(rs));
+                Videojuego v = mapearVideojuegoBasico(rs);
+                // Rellenamos las listas usando métodos específicos
+                v.setGeneros(obtenerGenerosDeJuego(v.getIdVideojuego()));
+                v.setPlataformas(obtenerPlataformasDeJuego(v.getIdVideojuego()));
+                videojuegos.add(v);
             }
-
-
         } catch (SQLException e) {
-            throw new AppException("Error: "+e.getMessage());
+            throw new AppException("Error al listar: " + e.getMessage());
         }
         return videojuegos;
+    }
+
+    // Métodos de ayuda que hacen las consultas a las tablas intermedias más legibles
+    private List<Genero> obtenerGenerosDeJuego(int idJuego) throws SQLException, AppException {
+        List<Genero> lista = new ArrayList<>();
+        String sql = "SELECT g.* FROM genero g JOIN videojuego_genero vg ON g.Id_genero = vg.Id_genero WHERE vg.Id_videojuego = ?";
+        try (Connection con = ConexionDB.getInstance(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idJuego);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(new Genero(rs.getInt("Id_genero"), rs.getString("nombre_genero")));
+            }
+        }
+        return lista;
+    }
+
+    private List<Plataforma> obtenerPlataformasDeJuego(int idJuego) throws SQLException, AppException {
+        List<Plataforma> lista = new ArrayList<>();
+        String sql = "SELECT p.* FROM plataformas p JOIN videojuego_plataforma vp ON p.Id_plataforma = vp.Id_plataforma WHERE vp.Id_videojuego = ?";
+        try (Connection con = ConexionDB.getInstance(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idJuego);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(new Plataforma(rs.getInt("Id_plataforma"), rs.getString("nombre_plataforma")));
+            }
+        }
+        return lista;
+    }
+
+    // Método de mapeo limpio para los datos de la tabla 'videojuego'
+    private Videojuego mapearVideojuegoBasico(ResultSet rs) throws SQLException {
+        Videojuego v = new Videojuego();
+        v.setIdVideojuego(rs.getInt("Id_videojuego"));
+        v.setTitulo(rs.getString("titulo"));
+        v.setDesarrollador(rs.getString("desarrollador"));
+        v.setAñoLanzamiento(rs.getInt("año_lanzamiento"));
+        return v;
     }
 
     /**
@@ -340,32 +364,25 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
     }
 
     @Override
-    public List<Videojuego> listarPorUsuario(int idUsuario) {
+    public List<Videojuego> listarPorUsuario(int idUsuario) throws AppException {
         List<Videojuego> juegos = new ArrayList<>();
-        // Ajusta los nombres de las tablas según tu base de datos
-        // Suponiendo una tabla intermedia 'usuario_videojuego'
-        String sql = "SELECT v.*, " +
-                "GROUP_CONCAT(DISTINCT g.nombre_genero SEPARATOR ';') AS datos_generos, " +
-                "GROUP_CONCAT(DISTINCT p.nombre_plataforma SEPARATOR ';') AS datos_plataformas " +
-                "FROM videojuego v " +
-                "JOIN usuario_videojuego uv ON v.Id_videojuego = uv.Id_videojuego " +
-                "LEFT JOIN videojuego_genero vg ON v.Id_videojuego = vg.Id_videojuego " +
-                "LEFT JOIN genero g ON vg.Id_genero = g.Id_genero " +
-                "LEFT JOIN videojuego_plataforma vp ON v.Id_videojuego = vp.Id_videojuego " +
-                "LEFT JOIN plataformas p ON vp.Id_plataforma = p.Id_plataforma " +
-                "WHERE uv.Id_usuario = ? " +
-                "GROUP BY v.Id_videojuego";
+        // Solo buscamos los IDs de los juegos que pertenecen al usuario
+        String sql = "SELECT v.* FROM videojuego v JOIN usuario_videojuego uv ON v.Id_videojuego = uv.Id_videojuego WHERE uv.Id_usuario = ?";
 
         try (Connection con = ConexionDB.getInstance();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idUsuario);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    juegos.add(mapearVideojuego(rs)); // Reutiliza tu método mapear
+                    Videojuego v = mapearVideojuegoBasico(rs);
+                    // Reutilizamos la lógica de carga de listas
+                    v.setGeneros(obtenerGenerosDeJuego(v.getIdVideojuego()));
+                    v.setPlataformas(obtenerPlataformasDeJuego(v.getIdVideojuego()));
+                    juegos.add(v);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new AppException("Error al listar juegos del usuario: " + e.getMessage());
         }
         return juegos;
     }

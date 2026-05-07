@@ -1,19 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController"
-      style="-fx-background-color: #121212;">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-    <Label text="KUMOAPP" style="-fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold;"/>
+<VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #1e1e1e;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+    </padding>
 
-    <VBox maxWidth="300" spacing="10" alignment="CENTER">
-        <TextField fx:id="txtEmail" promptText="Correo Electrónico"
-                   style="-fx-background-radius: 5; -fx-padding: 10;"/>
-        <PasswordField fx:id="txtPassword" promptText="Contraseña"
-                       style="-fx-background-radius: 5; -fx-padding: 10;"/>
-        <Button text="ENTRAR" onAction="#handleLogin" maxWidth="Infinity"
-                style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10;"/>
+    <Label text="KUMO APP" textFill="WHITE">
+        <font>
+            <Font name="System Bold" size="36.0" />
+        </font>
+    </Label>
+
+    <Label text="Gestión de Videojuegos Personal" textFill="#b4b4b4">
+        <font>
+            <Font size="14.0" />
+        </font>
+    </Label>
+
+    <VBox maxWidth="320.0" spacing="15.0">
+        <VBox spacing="5.0">
+            <Label text="Correo Electrónico" textFill="WHITE" />
+            <TextField fx:id="txtEmail" promptText="usuario@email.com"
+                       style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #3d5afe; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 10;" />
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label text="Contraseña" textFill="WHITE" />
+            <PasswordField fx:id="txtPassword" promptText="••••••••"
+                           style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #3d5afe; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 10;" />
+        </VBox>
     </VBox>
+
+    <Button fx:id="btnEntrar" defaultButton="true" maxWidth="320.0" onAction="#handleLogin" text="INICIAR SESIÓN"
+            style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 12; -fx-background-radius: 5;">
+        <font>
+            <Font size="14.0" />
+        </font>
+        <VBox.margin>
+            <Insets top="10.0" />
+        </VBox.margin>
+    </Button>
+
+    <Label style="-fx-cursor: hand;" text="¿No tienes cuenta? Regístrate aquí" textFill="#3d5afe">
+        <font>
+            <Font size="12.0" />
+        </font>
+    </Label>
 </VBox>

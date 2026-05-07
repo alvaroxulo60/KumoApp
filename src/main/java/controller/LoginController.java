@@ -11,21 +11,29 @@ import java.util.List;
 public class LoginController {
     @FXML private TextField txtEmail;
     @FXML private PasswordField txtPassword;
+    @FXML private Button btnEntrar;
+
+    @FXML
+    public void initialize() {
+        // Configuración para que el Enter en los campos de texto dispare el login
+        txtEmail.setOnAction(event -> handleLogin());
+        txtPassword.setOnAction(event -> handleLogin());
+    }
 
     @FXML
     private void handleLogin() {
-        String email = txtEmail.getText().trim(); // .trim() quita espacios vacíos
+        String email = txtEmail.getText().trim();
         String pass = txtPassword.getText();
+
+        if (email.isEmpty() || pass.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Introduce tus credenciales.");
+            return;
+        }
 
         UsuarioDAOMysql userDAO = new UsuarioDAOMysql();
         try {
             List<Usuario> usuarios = userDAO.listarTodos();
 
-            for (Usuario u: usuarios){
-                System.out.println(u.getEmail() + " - " + u.getPassword());
-            }
-
-            // Buscamos si existe el usuario con ignoreCase para el email
             Usuario encontrado = usuarios.stream()
                     .filter(u -> u.getEmail().equalsIgnoreCase(email) && u.getPassword().equals(pass))
                     .findFirst()
@@ -35,11 +43,11 @@ public class LoginController {
                 Sesion.setUsuario(encontrado);
                 App.setRoot("MainView");
             } else {
-                mostrarAlerta("Error", "Credenciales incorrectas. Revisa el email y la contraseña.%s-%s".formatted(email, pass));
+                mostrarAlerta("Error de acceso", "Email o contraseña incorrectos.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error de conexión", "No se pudo conectar a MySQL.");
+            mostrarAlerta("Error de conexión", "Error al conectar con la base de datos.");
         }
     }
 
