@@ -16,8 +16,7 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         String sql = "SELECT * FROM usuario WHERE idUsuario = ?";
         Usuario usuario = null;
 
-        try {
-            Connection conn = ConexionDB.getInstance();
+        try(Connection conn = ConexionDB.getInstance()){
             try (PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setInt(1, id);
                 try (java.sql.ResultSet rs = ps.executeQuery()){
@@ -42,8 +41,7 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         String sql = "SELECT * FROM usuario";
         List<Usuario> listaUsuarios = new java.util.ArrayList<>();
 
-        try {
-            Connection conn = ConexionDB.getInstance();
+        try(Connection conn = ConexionDB.getInstance()) {
             try (PreparedStatement ps = conn.prepareStatement(sql);
                  java.sql.ResultSet rs = ps.executeQuery()){
 
@@ -66,8 +64,7 @@ public class UsuarioDAOMysql implements UsuarioDAO {
     public void actualizar(Usuario usuario) {
         String sql = "UPDATE usuario SET nombre = ?, email = ?, numeroTelefono = ?, password = ? WHERE idUsuario = ?";
 
-        try {
-            Connection conn = ConexionDB.getInstance();
+        try(Connection conn = ConexionDB.getInstance()) {
             try (PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, usuario.getNombre());
                 ps.setString(2, usuario.getEmail());
@@ -86,8 +83,7 @@ public class UsuarioDAOMysql implements UsuarioDAO {
     public void eliminar(int id) {
         String sql = "DELETE FROM usuario WHERE idUsuario = ?";
 
-        try {
-            Connection conn = ConexionDB.getInstance();
+        try(Connection conn = ConexionDB.getInstance()) {
             try (PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setInt(1, id);
                 ps.executeUpdate();
@@ -102,9 +98,7 @@ public class UsuarioDAOMysql implements UsuarioDAO {
 
         String sql = "INSERT INTO usuario (idUsuario, nombre, email, numeroTelefono, password) VALUES (?, ?, ?, ?, ?)";
 
-        try {
-            Connection conn = ConexionDB.getInstance();
-
+        try(Connection conn = ConexionDB.getInstance()) {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, u.getIdUsuario());
                 ps.setString(2, u.getNombre());
