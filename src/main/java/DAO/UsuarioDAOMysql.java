@@ -4,113 +4,133 @@ import interfacesDAO.UsuarioDAO;
 import io.ConexionDB;
 import models.Usuario;
 import exception.AppException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAOMysql implements UsuarioDAO {
 
-    @Override
-    public Usuario obtenerPorId(int id) {
-        String sql = "SELECT * FROM usuario WHERE idUsuario = ?";
-        Usuario usuario = null;
-
-        try(Connection conn = ConexionDB.getInstance()){
-            try (PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setInt(1, id);
-                try (java.sql.ResultSet rs = ps.executeQuery()){
-                    if(rs.next()){
-                        usuario = new Usuario();
-                        usuario.setIdUsuario(rs.getInt("Id_Usuario"));
-                        usuario.setNombre(rs.getString("nombre"));
-                        usuario.setEmail(rs.getString("email"));
-                        usuario.setNumeroTelefono(rs.getInt("teléfono"));
-                        usuario.setPassword(rs.getString("password"));
-                    }
-                }
-            }
-        }catch (SQLException | AppException e){
-            System.err.println("Error al obtener el usuario por ID: " + e.getMessage());
-        }
-        return  usuario;
-    }
-
+    /**
+     * Recupera todos los usuarios de la base de datos.
+     * Corregido: Ahora añade cada usuario a la lista para que el login funcione.
+     */
     @Override
     public List<Usuario> listarTodos() {
         String sql = "SELECT * FROM usuario";
-        List<Usuario> listaUsuarios = new java.util.ArrayList<>();
+        List<Usuario> listaUsuarios = new ArrayList<>();
 
-        try(Connection conn = ConexionDB.getInstance()) {
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 java.sql.ResultSet rs = ps.executeQuery()){
+        try (Connection conn = ConexionDB.getInstance();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-                while (rs.next()){
-                    Usuario usuario = new Usuario();
-                    usuario.setIdUsuario(rs.getInt("Id_usuario"));
-                    usuario.setNombre(rs.getString("nombre"));
-                    usuario.setEmail(rs.getString("email"));
-                    usuario.setPassword(rs.getString("password"));
-                    usuario.setNumeroTelefono(rs.getInt("teléfono"));
-                }
+            while (rs.next()) {
+                // Se utiliza el método mapear para evitar errores de nombres
+                listaUsuarios.add(mapearUsuario(rs));
             }
-        }catch (SQLException | AppException e){
+        } catch (SQLException | AppException e) {
             System.err.println("Error al listar los usuarios: " + e.getMessage());
         }
         return listaUsuarios;
     }
 
+    /**
+     * Obtiene un usuario específico por su ID.
+     */
+    @Override
+    public Usuario obtenerPorId(int id) {
+        String sql = "SELECT * FROM usuario WHERE Id_usuario = ?";
+        Usuario usuario = null;
+
+        try (Connection conn = ConexionDB.getInstance();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    usuario = mapearUsuario(rs);
+                }
+            }
+        } catch (SQLException | AppException e) {
+            System.err.println("Error al obtener el usuario por ID: " + e.getMessage());
+        }
+        return usuario;
+    }
+
+    /**
+     * Inserta un nuevo usuario en la base de datos.
+     */
+    @Override
+    public void insertar(Usuario u) {
+        // Id_usuario no suele incluirse si es AUTO_INCREMENT en la BD
+        String sql = "INSERT INTO usuario (username, Email, teléfono, password) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = ConexionDB.getInstance();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, u.getNombre());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getNumeroTelefono());
+            ps.setString(4, u.getPassword());
+
+            ps.executeUpdate();
+            System.out.println("✅ Usuario registrado con éxito.");
+        } catch (SQLException | AppException e) {
+            System.err.println("Error al intentar insertar el usuario: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Actualiza los datos de un usuario existente.
+     */
     @Override
     public void actualizar(Usuario usuario) {
-        String sql = "UPDATE usuario SET nombre = ?, email = ?, numeroTelefono = ?, password = ? WHERE idUsuario = ?";
+        String sql = "UPDATE usuario SET username = ?, Email = ?, teléfono = ?, password = ? WHERE Id_usuario = ?";
 
-        try(Connection conn = ConexionDB.getInstance()) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setString(1, usuario.getNombre());
-                ps.setString(2, usuario.getEmail());
-                ps.setInt(3, usuario.getNumeroTelefono());
-                ps.setString(4, usuario.getPassword());
-                ps.setInt(5, usuario.getIdUsuario());
+        try (Connection conn = ConexionDB.getInstance();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-                ps.executeUpdate();
-            }
-        }catch (SQLException | AppException e){
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getEmail());
+            ps.setString(3, usuario.getNumeroTelefono());
+            ps.setString(4, usuario.getPassword());
+            ps.setInt(5, usuario.getIdUsuario());
+
+            ps.executeUpdate();
+            System.out.println("✅ Usuario actualizado correctamente.");
+        } catch (SQLException | AppException e) {
             System.err.println("Error al actualizar el usuario: " + e.getMessage());
         }
     }
 
+    /**
+     * Elimina un usuario por su ID.
+     */
     @Override
     public void eliminar(int id) {
-        String sql = "DELETE FROM usuario WHERE idUsuario = ?";
+        String sql = "DELETE FROM usuario WHERE Id_usuario = ?";
 
-        try(Connection conn = ConexionDB.getInstance()) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setInt(1, id);
-                ps.executeUpdate();
-            }
-        }catch (SQLException | AppException e){
+        try (Connection conn = ConexionDB.getInstance();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            System.out.println("✅ Usuario eliminado.");
+        } catch (SQLException | AppException e) {
             System.err.println("Error al eliminar el usuario: " + e.getMessage());
         }
     }
 
-    @Override
-    public void insertar(Usuario u) {
-
-        String sql = "INSERT INTO usuario (idUsuario, nombre, email, numeroTelefono, password) VALUES (?, ?, ?, ?, ?)";
-
-        try(Connection conn = ConexionDB.getInstance()) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, u.getIdUsuario());
-                ps.setString(2, u.getNombre());
-                ps.setString(3, u.getEmail());
-                ps.setInt(4, u.getNumeroTelefono());
-                ps.setString(5, u.getPassword());
-
-                ps.executeUpdate();
-            }
-        } catch (SQLException | AppException e) {
-
-            System.err.println("Error al intentar insertar el usuario: " + e.getMessage());
-        }
+    /**
+     * Método auxiliar para convertir una fila de la BD en un objeto Usuario.
+     * Usa los nombres de columnas de tu imagen: Id_usuario, Nombre, Email, teléfono, password.
+     */
+    private Usuario mapearUsuario(ResultSet rs) throws SQLException {
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(rs.getInt("Id_usuario"));
+        usuario.setNombre(rs.getString("username"));
+        usuario.setEmail(rs.getString("Email"));
+        usuario.setNumeroTelefono(rs.getString("teléfono"));
+        usuario.setPassword(rs.getString("password"));
+        return usuario;
     }
 }

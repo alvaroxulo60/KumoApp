@@ -168,7 +168,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         }
 
         // Procesar Plataformas
-        String plataformas = rs.getString("datos_plataformas");
+        String plataformas = rs.getString("datos_generos");
         if (plataformas != null && !plataformas.isEmpty()) {
             List<Plataforma> listP = new ArrayList<>();
             for (String item : plataformas.split(";")) {
@@ -334,14 +334,14 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         // Ajusta los nombres de las tablas según tu base de datos
         // Suponiendo una tabla intermedia 'usuario_videojuego'
         String sql = "SELECT v.*, " +
-                "GROUP_CONCAT(DISTINCT g.nombre SEPARATOR ';') AS generos, " +
-                "GROUP_CONCAT(DISTINCT p.nombre SEPARATOR ';') AS plataformas " +
+                "GROUP_CONCAT(DISTINCT g.nombre_genero SEPARATOR ';') AS generos, " +
+                "GROUP_CONCAT(DISTINCT p.nombre_plataforma SEPARATOR ';') AS plataformas " +
                 "FROM videojuego v " +
                 "JOIN usuario_videojuego uv ON v.Id_videojuego = uv.Id_videojuego " +
                 "LEFT JOIN videojuego_genero vg ON v.Id_videojuego = vg.Id_videojuego " +
-                "LEFT JOIN genero g ON vg.Id_genero = g.id " +
+                "LEFT JOIN genero g ON vg.Id_genero = g.Id_genero " +
                 "LEFT JOIN videojuego_plataforma vp ON v.Id_videojuego = vp.Id_videojuego " +
-                "LEFT JOIN plataforma p ON vp.Id_plataforma = p.id " +
+                "LEFT JOIN plataformas p ON vp.Id_plataforma = p.Id_plataforma " +
                 "WHERE uv.Id_usuario = ? " +
                 "GROUP BY v.Id_videojuego";
 
