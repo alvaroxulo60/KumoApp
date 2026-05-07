@@ -16,4 +16,5 @@ public interface VideojuegoDAO {
     void eliminarVideojuego(int id) throws AppException;
     List<Genero> obtenerTodosLosGeneros() throws AppException, SQLException;
     List<Plataforma> obtenerTodasLasPlataformas() throws AppException, SQLException;
+    List<Videojuego> listarPorUsuario(int idUsuario) throws AppException;
 }

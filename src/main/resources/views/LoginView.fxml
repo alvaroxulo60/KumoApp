@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController"
+      style="-fx-background-color: #121212;">
+
+    <Label text="BIENVENIDO A KUMOAPP" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <VBox maxWidth="300" spacing="10">
+        <TextField fx:id="txtEmail" promptText="Email" style="-fx-background-radius: 10;"/>
+        <PasswordField fx:id="txtPassword" promptText="Contraseña" style="-fx-background-radius: 10;"/>
+        <Button text="Iniciar Sesión" onAction="#handleLogin" maxWidth="Infinity"
+                style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-cursor: hand;"/>
+    </VBox>
+
+</VBox>

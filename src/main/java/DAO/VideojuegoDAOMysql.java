@@ -327,5 +327,36 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         }
         return lista;
     }
+
+    @Override
+    public List<Videojuego> listarPorUsuario(int idUsuario) {
+        List<Videojuego> juegos = new ArrayList<>();
+        // Ajusta los nombres de las tablas según tu base de datos
+        // Suponiendo una tabla intermedia 'usuario_videojuego'
+        String sql = "SELECT v.*, " +
+                "GROUP_CONCAT(DISTINCT g.nombre SEPARATOR ';') AS generos, " +
+                "GROUP_CONCAT(DISTINCT p.nombre SEPARATOR ';') AS plataformas " +
+                "FROM videojuego v " +
+                "JOIN usuario_videojuego uv ON v.Id_videojuego = uv.Id_videojuego " +
+                "LEFT JOIN videojuego_genero vg ON v.Id_videojuego = vg.Id_videojuego " +
+                "LEFT JOIN genero g ON vg.Id_genero = g.id " +
+                "LEFT JOIN videojuego_plataforma vp ON v.Id_videojuego = vp.Id_videojuego " +
+                "LEFT JOIN plataforma p ON vp.Id_plataforma = p.id " +
+                "WHERE uv.Id_usuario = ? " +
+                "GROUP BY v.Id_videojuego";
+
+        try (Connection con = ConexionDB.getInstance();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    juegos.add(mapearVideojuego(rs)); // Reutiliza tu método mapear
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return juegos;
+    }
 }
 
