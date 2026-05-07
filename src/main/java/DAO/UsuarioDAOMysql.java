@@ -22,10 +22,10 @@ public class UsuarioDAOMysql implements UsuarioDAO {
                 try (java.sql.ResultSet rs = ps.executeQuery()){
                     if(rs.next()){
                         usuario = new Usuario();
-                        usuario.setIdUsuario(rs.getInt("idUsuario"));
+                        usuario.setIdUsuario(rs.getInt("Id_Usuario"));
                         usuario.setNombre(rs.getString("nombre"));
                         usuario.setEmail(rs.getString("email"));
-                        usuario.setNumeroTelefono(rs.getInt("numeroTelefono"));
+                        usuario.setNumeroTelefono(rs.getInt("teléfono"));
                         usuario.setPassword(rs.getString("password"));
                     }
                 }
@@ -47,11 +47,11 @@ public class UsuarioDAOMysql implements UsuarioDAO {
 
                 while (rs.next()){
                     Usuario usuario = new Usuario();
-                    usuario.setIdUsuario(rs.getInt("idUsuario"));
+                    usuario.setIdUsuario(rs.getInt("Id_usuario"));
                     usuario.setNombre(rs.getString("nombre"));
                     usuario.setEmail(rs.getString("email"));
                     usuario.setPassword(rs.getString("password"));
-                    usuario.setNumeroTelefono(rs.getInt("numeroTelefono"));
+                    usuario.setNumeroTelefono(rs.getInt("teléfono"));
                 }
             }
         }catch (SQLException | AppException e){

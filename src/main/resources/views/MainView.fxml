@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController"
+      styleClass="root" stylesheets="@../css/style.css">
+
+    <Label text="PANEL DE VIDEOJUEGOS" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+
+    <TableView fx:id="tablaJuegos" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colTitulo" text="Título" prefWidth="250"/>
+            <TableColumn fx:id="colDesarrollador" text="Desarrollador" prefWidth="200"/>
+            <TableColumn fx:id="colAnio" text="Año de Lanzamiento" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Eliminar Seleccionado" onAction="#eliminarJuego" styleClass="button"/>
+        <Button text="Cerrar Sesión" onAction="#handleLogout" style="-fx-background-color: #ff4444;"/>
+    </HBox>
+</VBox>

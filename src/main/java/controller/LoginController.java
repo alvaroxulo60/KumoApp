@@ -1,10 +1,14 @@
 package controller;
 
 import DAO.UsuarioDAOMysql;
+import io.App;
 import io.Sesion;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import models.Usuario;
+import java.io.IOException;
 import java.util.List;
 
 public class LoginController {
@@ -13,24 +17,19 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        String email = txtEmail.getText();
-        String pass = txtPassword.getText();
-
         UsuarioDAOMysql userDAO = new UsuarioDAOMysql();
         try {
-            // Buscamos al usuario en la lista total
             List<Usuario> usuarios = userDAO.listarTodos();
             Usuario encontrado = usuarios.stream()
-                    .filter(u -> u.getEmail().equals(email) && u.getPassword().equals(pass))
-                    .findFirst()
-                    .orElse(null);
+                    .filter(u -> u.getEmail().equalsIgnoreCase(txtEmail.getText())
+                            && u.getPassword().equals(txtPassword.getText()))
+                    .findFirst().orElse(null);
 
             if (encontrado != null) {
                 Sesion.setUsuario(encontrado);
-                System.out.println("Login correcto: " + encontrado.getNombre());
-                // Aquí cargarías la siguiente escena (MainView.fxml)
+                App.setRoot("MainView");
             } else {
-                mostrarAlerta("Error", "Credenciales inválidas");
+                mostrarAlerta("Error", "Credenciales incorrectas");
             }
         } catch (Exception e) {
             mostrarAlerta("Error Crítico", e.getMessage());

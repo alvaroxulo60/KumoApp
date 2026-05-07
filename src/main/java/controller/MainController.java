@@ -1,12 +1,14 @@
 package controller;
 
 import DAO.VideojuegoDAOMysql;
+import io.App;
 import io.Sesion;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import models.Videojuego;
 import exception.AppException;
+import java.io.IOException;
 
 public class MainController {
     @FXML private TableView<Videojuego> tablaJuegos;
@@ -18,37 +20,45 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        // Configurar cómo se muestran los datos en la tabla
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colDesarrollador.setCellValueFactory(new PropertyValueFactory<>("desarrollador"));
         colAnio.setCellValueFactory(new PropertyValueFactory<>("añoLanzamiento"));
-
         cargarDatosUsuario();
     }
 
     private void cargarDatosUsuario() {
-        // Solo cargamos los juegos del usuario que inició sesión
-        int idActual = Sesion.getUsuario().getIdUsuario();
-        tablaJuegos.getItems().setAll(gameDAO.listarPorUsuario(idActual));
+        if (Sesion.getUsuario() != null) {
+            tablaJuegos.getItems().setAll(gameDAO.listarPorUsuario(Sesion.getUsuario().getIdUsuario()));
+        }
     }
 
     @FXML
     private void eliminarJuego() {
-        Videojuego seleccionado = tablaJuegos.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
+        Videojuego sel = tablaJuegos.getSelectionModel().getSelectedItem();
+        if (sel != null) {
             try {
-                gameDAO.eliminarVideojuego(seleccionado.getIdVideojuego()); //
-                cargarDatosUsuario(); // Refrescar
+                gameDAO.eliminarVideojuego(sel.getIdVideojuego());
+                cargarDatosUsuario();
             } catch (AppException e) {
-                mostrarAlerta("Error al Guardar", e.getMessage(), Alert.AlertType.ERROR);            }
+                mostrarAlerta("Error", e.getMessage());
+            }
         }
     }
 
-    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    @FXML
+    private void handleLogout() {
+        try {
+            Sesion.logout();
+            App.setRoot("LoginView");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mostrarAlerta(String t, String m) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(t);
+        a.setContentText(m);
+        a.showAndWait();
     }
 }
