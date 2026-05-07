@@ -114,14 +114,25 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
     public List<Videojuego> listarTodos() throws AppException {
         String sql = "SELECT \n" +
                 "    v.*, \n" +
-                "    GROUP_CONCAT(DISTINCT CONCAT(g.Id_genero, ':', g.nombre_genero) SEPARATOR ';') AS datos_generos,\n" +
-                "    GROUP_CONCAT(DISTINCT CONCAT(p.Id_plataforma, ':', p.nombre_plataforma) SEPARATOR ';') AS datos_plataformas\n" +
+                "    generos.datos_generos,\n" +
+                "    plataformas.datos_plataformas\n" +
                 "FROM videojuego v\n" +
-                "JOIN videojuego_genero vg ON v.Id_videojuego = vg.Id_videojuego\n" +
-                "JOIN genero g ON vg.Id_genero = g.Id_genero\n" +
-                "JOIN videojuego_plataforma vp ON v.Id_videojuego = vp.Id_videojuego\n" +
-                "JOIN plataformas p ON vp.Id_plataforma = p.Id_plataforma\n" +
-                "GROUP BY v.Id_videojuego;";
+                "LEFT JOIN (\n" +
+                "    SELECT vg.Id_videojuego, \n" +
+                "           GROUP_CONCAT(CONCAT(g.Id_genero, ':', g.nombre_genero) SEPARATOR ';') AS datos_generos\n" +
+                "    FROM videojuego_genero vg\n" +
+                "    JOIN genero g ON vg.Id_genero = g.Id_genero\n" +
+                "    GROUP BY vg.Id_videojuego\n" +
+                ") generos ON v.Id_videojuego = generos.Id_videojuego\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT vp.Id_videojuego, \n" +
+                "           GROUP_CONCAT(CONCAT(p.Id_plataforma, ':', p.nombre_plataforma) SEPARATOR ';') AS datos_plataformas\n" +
+                "    FROM videojuego_plataforma vp\n" +
+                "    JOIN plataformas p ON vp.Id_plataforma = p.Id_plataforma\n" +
+                "    GROUP BY vp.Id_videojuego\n" +
+                ") plataformas ON v.Id_videojuego = plataformas.Id_videojuego;";
+
+        System.out.println(sql);
 
         List<Videojuego> videojuegos = new ArrayList<>();
 
@@ -334,8 +345,8 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         // Ajusta los nombres de las tablas según tu base de datos
         // Suponiendo una tabla intermedia 'usuario_videojuego'
         String sql = "SELECT v.*, " +
-                "GROUP_CONCAT(DISTINCT g.nombre_genero SEPARATOR ';') AS generos, " +
-                "GROUP_CONCAT(DISTINCT p.nombre_plataforma SEPARATOR ';') AS plataformas " +
+                "GROUP_CONCAT(DISTINCT g.nombre_genero SEPARATOR ';') AS datos_generos, " +
+                "GROUP_CONCAT(DISTINCT p.nombre_plataforma SEPARATOR ';') AS datos_plataformas " +
                 "FROM videojuego v " +
                 "JOIN usuario_videojuego uv ON v.Id_videojuego = uv.Id_videojuego " +
                 "LEFT JOIN videojuego_genero vg ON v.Id_videojuego = vg.Id_videojuego " +
