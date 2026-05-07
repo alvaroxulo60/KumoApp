@@ -3,7 +3,6 @@ package DAO;
 import exception.AppException;
 import interfacesDAO.VideojuegoDAO;
 import io.ConexionDB;
-import io.PropertiesReader;
 import models.Genero;
 import models.Plataforma;
 import models.Videojuego;
@@ -103,7 +102,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                     listG.add(new Genero(Integer.parseInt(partes[0]), partes[1]));
                 }
             }
-            v.setGenero(listG);
+            v.setGeneros(listG);
         }
 
         // Procesar Plataformas
@@ -116,7 +115,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                     listP.add(new Plataforma(Integer.parseInt(partes[0]), partes[1]));
                 }
             }
-            v.setPlataforma(listP);
+            v.setPlataformas(listP);
         }
 
         return v;
@@ -161,7 +160,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                 c.rollback();
                 throw new AppException("No se ha podido borrar el juego");
             }
-            
+
         } catch (SQLException e) {
             throw new AppException("Error: " + e.getMessage());
         }
@@ -169,7 +168,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     public List<Genero> obtenerTodosLosGeneros() throws AppException, SQLException {
         List<Genero> lista = new ArrayList<>();
-        String sql = "SELECT id, nombre FROM generos"; // Ajusta según tus columnas reales
+        String sql = "SELECT Id_genero, nombre FROM generos"; // Ajusta según tus columnas reales
 
         try (Connection con = ConexionDB.getInstance(); // Usa tu método de conexión
              Statement stmt = con.createStatement();
@@ -185,7 +184,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     public List<Plataforma> obtenerTodasLasPlataformas() throws AppException, SQLException {
         List<Plataforma> lista = new ArrayList<>();
-        String sql = "SELECT id, nombre FROM plataformas"; // Ajusta según tus columnas reales
+        String sql = "SELECT Id_plataforma, nombre FROM plataformas"; // Ajusta según tus columnas reales
 
         try (Connection con = ConexionDB.getInstance();
              Statement stmt = con.createStatement();

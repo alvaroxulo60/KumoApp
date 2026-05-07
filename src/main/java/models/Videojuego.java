@@ -51,7 +51,7 @@ public class Videojuego {
         return plataformas;
     }
 
-    public List<Genero> getGenero() {
+    public List<Genero> getGeneros() {
         return generos;
     }
 
@@ -71,11 +71,11 @@ public class Videojuego {
         this.añoLanzamiento = añoLanzamiento;
     }
 
-    public void setPlataforma(List<Plataforma> plataforma) {
+    public void setPlataformas(List<Plataforma> plataforma) {
         this.plataformas = plataforma;
     }
 
-    public void setGenero(List<Genero> genero) {
+    public void setGeneros(List<Genero> genero) {
         this.generos = genero;
     }
 
