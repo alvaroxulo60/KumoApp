@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 public class MainController {
     @FXML private TableView<Videojuego> tablaJuegos;
-    @FXML private TableColumn<Videojuego, String> colTitulo, colDesarrollador, colGeneros, colPlataformas;
-    @FXML private TableColumn<Videojuego, Integer> colAnio;
+    @FXML private TableColumn<Videojuego, String> colTitulo, colDesarrollador, colGeneros, colPlataformas, colEstado;
+    @FXML private TableColumn<Videojuego, Integer> colAnio, colNota;
 
     private final VideojuegoDAOMysql gameDAO = new VideojuegoDAOMysql();
 
@@ -37,8 +37,9 @@ public class MainController {
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colDesarrollador.setCellValueFactory(new PropertyValueFactory<>("desarrollador"));
         colAnio.setCellValueFactory(new PropertyValueFactory<>("añoLanzamiento"));
+        colNota.setCellValueFactory(new PropertyValueFactory<>("notaPersonal"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
-        // Mapeo de listas de objetos a un String separado por comas para la visualización
         colGeneros.setCellValueFactory(cd -> {
             String generos = cd.getValue().getGeneros().stream()
                     .map(Genero::nombre)
@@ -83,7 +84,7 @@ public class MainController {
 
     private void mostrarFormulario(Videojuego v) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GameFormView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GameForm.fxml"));
             Parent root = loader.load();
 
             GameFormController controller = loader.getController();
@@ -95,7 +96,6 @@ public class MainController {
             stage.setScene(new Scene(root));
             stage.showAndWait();
 
-            // Si el formulario confirma que se guardó información, refrescamos la tabla
             if (controller.isOperacionExitosa()) {
                 cargarDatos();
             }
@@ -115,6 +115,16 @@ public class MainController {
             } catch (AppException e) {
                 mostrarAlerta("Error al eliminar", e.getMessage());
             }
+        }
+    }
+
+    @FXML
+    private void handleLogout() {
+        try {
+            Sesion.logout();
+            io.App.setRoot("LoginView");
+        } catch (IOException e) {
+            mostrarAlerta("Error", "No se pudo volver a la pantalla de inicio.");
         }
     }
 

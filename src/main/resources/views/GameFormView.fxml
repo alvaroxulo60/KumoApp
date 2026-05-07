@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameFormController"
+      style="-fx-background-color: #1e1e1e; -fx-padding: 30;">
+
+    <Label text="GESTIÓN DE VIDEOJUEGO" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="10" alignment="CENTER">
+        <Label text="Título:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: white;"/>
+        <TextField fx:id="txtTitulo" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
+
+        <Label text="Desarrollador:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: white;"/>
+        <TextField fx:id="txtDesarrollador" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Año Lanzamiento:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: white;"/>
+        <TextField fx:id="txtAnio" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Géneros (Ctrl+Click):" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: white;"/>
+        <ListView fx:id="lvGeneros" GridPane.columnIndex="1" GridPane.rowIndex="3" prefHeight="80"/>
+
+        <Label text="Plataformas (Ctrl+Click):" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: white;"/>
+        <ListView fx:id="lvPlataformas" GridPane.columnIndex="1" GridPane.rowIndex="4" prefHeight="80"/>
+
+        <Label text="Nota Personal (0-10):" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: white;"/>
+        <TextField fx:id="txtNota" GridPane.columnIndex="1" GridPane.rowIndex="5" text="0"/>
+
+        <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: white;"/>
+        <ComboBox fx:id="cbEstado" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="250"/>
+    </GridPane>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="CANCELAR" onAction="#handleCancelar" style="-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="GUARDAR JUEGO" onAction="#handleGuardar" style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>
