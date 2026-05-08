@@ -10,13 +10,13 @@
 
     <TableView fx:id="tablaJuegos" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colTitulo" text="Título" prefWidth="180"/>
+            <TableColumn fx:id="colTitulo" text="Título" prefWidth="200"/>
             <TableColumn fx:id="colDesarrollador" text="Desarrollador" prefWidth="150"/>
             <TableColumn fx:id="colAnio" text="Año" prefWidth="80"/>
             <TableColumn fx:id="colGeneros" text="Géneros" prefWidth="150"/>
             <TableColumn fx:id="colPlataformas" text="Plataformas" prefWidth="150"/>
-            <TableColumn fx:id="colNota" text="Nota" prefWidth="60"/>
-            <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+            <TableColumn fx:id="colNota" text="Nota" prefWidth="80"/>
+            <TableColumn fx:id="colEstado" text="Estado" prefWidth="120"/>
         </columns>
     </TableView>
 

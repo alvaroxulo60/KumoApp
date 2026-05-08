@@ -36,6 +36,9 @@ public class MainController {
     }
 
     private void configurarColumnas() {
+
+        tablaJuegos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colDesarrollador.setCellValueFactory(new PropertyValueFactory<>("desarrollador"));
         colAnio.setCellValueFactory(cd -> new javafx.beans.property.SimpleIntegerProperty(cd.getValue().getAñoLanzamiento()).asObject());

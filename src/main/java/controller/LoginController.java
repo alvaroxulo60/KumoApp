@@ -4,8 +4,14 @@ import DAO.UsuarioDAOMysql;
 import io.App;
 import io.Sesion;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import models.Usuario;
+
+import java.io.IOException;
 import java.util.List;
 
 public class LoginController {
@@ -48,6 +54,22 @@ public class LoginController {
             e.printStackTrace(); // Esto imprimirá el error real en la consola roja de tu IDE
             String causa = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage();
             mostrarAlerta("Fallo en la aplicación", "Error real al cargar: " + causa);
+        }
+    }
+
+    @FXML
+    private void abrirRegistro() { // Cambiado para que funcione con el Hyperlink
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/RegisterView.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Crear Nueva Cuenta - KumoApp");
+            stage.setScene(new Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // Bloquea la de atrás hasta cerrar esta
+            stage.show();
+        } catch (IOException e) {
+            mostrarAlerta("Error", "No se pudo cargar la pantalla de registro.");
+            e.printStackTrace();
         }
     }
 

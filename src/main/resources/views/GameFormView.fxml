@@ -25,7 +25,7 @@
         <Label text="Plataformas (Ctrl+Click):" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: white;"/>
         <ListView fx:id="lvPlataformas" GridPane.columnIndex="1" GridPane.rowIndex="4" prefHeight="80"/>
 
-        <Label text="Nota Personal (0-10):" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: white;"/>
+        <Label text="Nota Personal  :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: white;"/>
         <TextField fx:id="txtNota" GridPane.columnIndex="1" GridPane.rowIndex="5" text="0"/>
 
         <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: white;"/>
