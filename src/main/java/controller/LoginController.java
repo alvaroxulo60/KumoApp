@@ -11,23 +11,30 @@ import java.util.List;
 public class LoginController {
     @FXML private TextField txtEmail;
     @FXML private PasswordField txtPassword;
+    @FXML private Button btnEntrar;
+
+    @FXML
+    public void initialize() {
+        txtEmail.setOnAction(event -> handleLogin());
+        txtPassword.setOnAction(event -> handleLogin());
+    }
 
     @FXML
     private void handleLogin() {
-        String email = txtEmail.getText().trim(); // .trim() quita espacios vacíos
+        String email = txtEmail.getText().trim();
         String pass = txtPassword.getText();
+
+        if (email.isEmpty() || pass.isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Introduce tus credenciales.");
+            return;
+        }
 
         UsuarioDAOMysql userDAO = new UsuarioDAOMysql();
         try {
             List<Usuario> usuarios = userDAO.listarTodos();
 
-            for (Usuario u: usuarios){
-                System.out.println(u.getEmail() + " - " + u.getPassword());
-            }
-
-            // Buscamos si existe el usuario con ignoreCase para el email
             Usuario encontrado = usuarios.stream()
-                    .filter(u -> u.getEmail().equalsIgnoreCase(email) && u.getPassword().equals(pass))
+                    .filter(u -> email.equalsIgnoreCase(u.getEmail()) && pass.equals(u.getPassword()))
                     .findFirst()
                     .orElse(null);
 
@@ -35,11 +42,12 @@ public class LoginController {
                 Sesion.setUsuario(encontrado);
                 App.setRoot("MainView");
             } else {
-                mostrarAlerta("Error", "Credenciales incorrectas. Revisa el email y la contraseña.%s-%s".formatted(email, pass));
+                mostrarAlerta("Error de acceso", "Email o contraseña incorrectos.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            mostrarAlerta("Error de conexión", "No se pudo conectar a MySQL.");
+            e.printStackTrace(); // Esto imprimirá el error real en la consola roja de tu IDE
+            String causa = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage();
+            mostrarAlerta("Fallo en la aplicación", "Error real al cargar: " + causa);
         }
     }
 
