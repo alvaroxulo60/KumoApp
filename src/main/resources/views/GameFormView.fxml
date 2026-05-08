@@ -3,45 +3,53 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Font?>
 
-<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameFormController"
-      style="-fx-background-color: #1e1e1e; -fx-padding: 30;">
+<StackPane styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameFormController">
+    <children>
+        <VBox spacing="20" alignment="CENTER" maxHeight="650.0" maxWidth="500.0"
+              style="-fx-background-color: #1a1a2e; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 20, 0, 0, 0);">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
 
-    <Label text="GESTIÓN DE VIDEOJUEGO" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Label text="GESTIÓN DE CATÁLOGO" textFill="WHITE">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+                <style>-fx-effect: dropshadow(one-pass-box, #3d5afe, 5, 0, 0, 0);</style>
+            </Label>
 
-    <GridPane hgap="10" vgap="10" alignment="CENTER">
-        <Label text="Título:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: white;"/>
-        <TextField fx:id="txtTitulo" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
+            <GridPane hgap="15" vgap="12" alignment="CENTER">
+                <Label text="TÍTULO:" textFill="#3d5afe" style="-fx-font-weight: bold; -fx-font-size: 11px;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="txtTitulo" promptText="Nombre del juego" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250"/>
 
-        <Label text="Desarrollador:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: white;"/>
-        <TextField fx:id="txtDesarrollador" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="DESARROLLADOR:" textFill="#3d5afe" style="-fx-font-weight: bold; -fx-font-size: 11px;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="txtDesarrollador" promptText="Ej: Nintendo, Ubisoft..." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <Label text="Año Lanzamiento:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: white;"/>
-        <TextField fx:id="txtAnio" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="AÑO:" textFill="#3d5afe" style="-fx-font-weight: bold; -fx-font-size: 11px;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="txtAnio" promptText="2024" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <Label text="Géneros (Ctrl+Click):" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: white;"/>
-        <ListView fx:id="lvGeneros" GridPane.columnIndex="1" GridPane.rowIndex="3" prefHeight="80"/>
+                <Label text="GÉNEROS (ctrl + click):" textFill="#3d5afe" style="-fx-font-weight: bold; -fx-font-size: 11px;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <ListView fx:id="lvGeneros" prefHeight="70" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-        <Label text="Plataformas (Ctrl+Click):" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: white;"/>
-        <ListView fx:id="lvPlataformas" GridPane.columnIndex="1" GridPane.rowIndex="4" prefHeight="80"/>
+                <Label text="PLATAFORMAS (ctrl + click):" textFill="#3d5afe" style="-fx-font-weight: bold; -fx-font-size: 11px;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <ListView fx:id="lvPlataformas" prefHeight="70" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            </GridPane>
 
-        <Label text="Nota Personal  :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: white;"/>
-        <TextField fx:id="txtNota" GridPane.columnIndex="1" GridPane.rowIndex="5" text="0"/>
+            <HBox spacing="15" alignment="CENTER" style="-fx-background-color: #161625; -fx-padding: 10; -fx-background-radius: 10;">
+                <StackPane style="-fx-border-color: #3d5afe; -fx-border-width: 1; -fx-border-radius: 5;">
+                    <ImageView fx:id="imgPortada" fitWidth="80" fitHeight="110" preserveRatio="false"/>
+                </StackPane>
+                <Button text="SUBIR PORTADA" onAction="#handleSeleccionarPortada"
+                        style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            </HBox>
 
-        <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: white;"/>
-        <ComboBox fx:id="cbEstado" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="250"/>
-    </GridPane>
-
-    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 10 0 10 0;">
-        <StackPane style="-fx-border-color: #3d5afe; -fx-border-width: 1;">
-            <ImageView fx:id="imgPortada" fitWidth="100" fitHeight="140" preserveRatio="false"/>
-        </StackPane>
-        <Button text="Seleccionar Portada" onAction="#handleSeleccionarPortada" style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold;"/>
-    </HBox>
-
-    <HBox spacing="20" alignment="CENTER">
-        <Button text="CANCELAR" onAction="#handleCancelar" style="-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-weight: bold;"/>
-        <Button text="GUARDAR JUEGO" onAction="#handleGuardar" style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold;"/>
-    </HBox>
-</VBox>
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="CANCELAR" onAction="#handleCancelar"
+                        style="-fx-background-color: transparent; -fx-border-color: #ff4444; -fx-text-fill: #ff4444; -fx-border-radius: 20;"/>
+                <Button text="GUARDAR VIDEOJUEGO" onAction="#handleGuardar" styleClass="button"/>
+            </HBox>
+        </VBox>
+    </children>
+</StackPane>

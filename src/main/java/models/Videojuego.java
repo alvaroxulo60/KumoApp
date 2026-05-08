@@ -13,7 +13,7 @@ public class Videojuego {
 
     private String notaPersonal;
     private String estado;
-    private byte[] portada; // MODIFICADO: Ahora es un array de bytes para la BD
+    private byte[] portada;
 
     public Videojuego() {
     }
@@ -54,7 +54,7 @@ public class Videojuego {
     public List<Genero> getGeneros() { return generos; }
     public String getNotaPersonal() { return notaPersonal; }
     public String getEstado() { return estado; }
-    public byte[] getPortada() { return portada; } // MODIFICADO
+    public byte[] getPortada() { return portada; }
 
     public void setIdVideojuego(int idVideojuego) { this.idVideojuego = idVideojuego; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -64,7 +64,7 @@ public class Videojuego {
     public void setGeneros(List<Genero> genero) { this.generos = genero; }
     public void setNotaPersonal(String notaPersonal) { this.notaPersonal = notaPersonal; }
     public void setEstado(String estado) { this.estado = estado; }
-    public void setPortada(byte[] portada) { this.portada = portada; } // MODIFICADO
+    public void setPortada(byte[] portada) { this.portada = portada; }
 
     @Override
     public String toString() {

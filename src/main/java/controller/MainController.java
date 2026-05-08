@@ -31,23 +31,28 @@ public class MainController {
 
     @FXML private ImageView imgPortadaMain;
     @FXML private Label lblTituloSeleccionado;
+    @FXML private Button btnAdminCrear; // Declaración del botón admin de tu FXML
 
     @FXML
     public void initialize() {
+        // Validación de Administrador
+        boolean esAdmin = Sesion.getUsuario().isAdmin();
+        if (btnAdminCrear != null) {
+            btnAdminCrear.setVisible(esAdmin);
+            btnAdminCrear.setManaged(esAdmin);
+        }
+
         configurarColumnas();
         cargarDatos();
 
-        // Escuchar cambios en la selección de la tabla
         tablaJuegos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 lblTituloSeleccionado.setText(newValue.getTitulo());
 
-                // MODIFICADO: Leer y convertir los bytes guardados en la BD en una imagen de JavaFX
                 if (newValue.getPortada() != null && newValue.getPortada().length > 0) {
                     java.io.ByteArrayInputStream bis = new java.io.ByteArrayInputStream(newValue.getPortada());
                     imgPortadaMain.setImage(new javafx.scene.image.Image(bis));
                 } else {
-                    // El juego no tiene portada asignada
                     imgPortadaMain.setImage(null);
                 }
             } else {
@@ -95,28 +100,30 @@ public class MainController {
 
     @FXML
     private void abrirAnadir() {
-        mostrarFormulario(null);
+        mostrarFormularioUsuario(null);
     }
 
     @FXML
     private void abrirEditar() {
         Videojuego sel = tablaJuegos.getSelectionModel().getSelectedItem();
         if (sel != null) {
-            mostrarFormulario(sel);
+            mostrarFormularioUsuario(sel);
         } else {
-            mostrarAlerta("Selección necesaria", "Por favor, selecciona un juego de la tabla para editar.");
+            mostrarAlerta("Selección necesaria", "Por favor, selecciona un juego de la tabla para editar tu nota.");
         }
     }
 
-    private void mostrarFormulario(Videojuego v) {
+    // Método para usuarios normales (Abre el nuevo controlador)
+    private void mostrarFormularioUsuario(Videojuego v) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GameFormView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/UserGameFormView.fxml"));
             Parent root = loader.load();
-            GameFormController controller = loader.getController();
-            if (v != null) controller.setJuego(v);
+            UserGameFormController controller = loader.getController();
+
+            if (v != null) controller.setJuegoEdicion(v);
 
             Stage stage = new Stage();
-            stage.setTitle(v == null ? "Añadir Videojuego" : "Editar Videojuego");
+            stage.setTitle(v == null ? "Añadir a mi lista" : "Editar Nota y Estado");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
             stage.showAndWait();
@@ -130,16 +137,36 @@ public class MainController {
         }
     }
 
+    // Método EXCLUSIVO para Administradores (Abre tu formulario original)
+    @FXML
+    private void abrirFormularioAdmin() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GameFormView.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Panel de Administración - Crear Juego Global");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error de sistema", "No se pudo abrir el panel de administración.");
+        }
+    }
+
     @FXML
     private void eliminarJuego() {
         Videojuego sel = tablaJuegos.getSelectionModel().getSelectedItem();
-        if (sel != null) {
+        if (sel != null && Sesion.getUsuario() != null) {
             try {
-                gameDAO.eliminarVideojuego(sel.getIdVideojuego());
+                gameDAO.eliminarJuegoDeUsuario(Sesion.getUsuario().getIdUsuario(), sel.getIdVideojuego());
                 cargarDatos();
             } catch (AppException e) {
                 mostrarAlerta("Error al eliminar", e.getMessage());
             }
+        } else {
+            mostrarAlerta("Aviso", "Selecciona un juego para quitarlo de tu biblioteca.");
         }
     }
 

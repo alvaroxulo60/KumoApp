@@ -7,8 +7,9 @@ public class Usuario {
     private String password;
     private String numeroTelefono;
     private int idUsuario;
+    private boolean admin; // NUEVO: Campo para saber si es administrador
 
-    public Usuario(){
+    public Usuario() {
     }
 
     public String getEmail() {
@@ -31,6 +32,10 @@ public class Usuario {
         return password;
     }
 
+    public boolean isAdmin() {
+        return admin;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -49,5 +54,9 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

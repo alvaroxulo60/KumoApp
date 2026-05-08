@@ -29,11 +29,8 @@ public class GameFormController {
     @FXML private TextField txtAnio;
     @FXML private ListView<Genero> lvGeneros;
     @FXML private ListView<Plataforma> lvPlataformas;
-    @FXML private TextField txtNota;
-    @FXML private ComboBox<String> cbEstado;
-
     @FXML private ImageView imgPortada;
-    // MODIFICADO: Guardamos la imagen como un array de bytes
+
     private byte[] bytesImagenSeleccionada = null;
 
     private final VideojuegoDAO videojuegoDAO = new VideojuegoDAOMysql();
@@ -48,11 +45,9 @@ public class GameFormController {
         lvGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         lvPlataformas.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        cbEstado.setItems(FXCollections.observableArrayList("Pendiente", "Jugando", "Completado", "Abandonado"));
-        cbEstado.setValue("Pendiente");
-
         cargarCombos();
 
+        // Validar que el año solo contenga números
         txtAnio.setTextFormatter(new TextFormatter<>(change -> {
             if (change.getText().matches("[0-9]*")) {
                 return change;
@@ -82,12 +77,8 @@ public class GameFormController {
 
         if (file != null) {
             try {
-                // MODIFICADO: Lee los bytes de la imagen directamente para la BD
                 bytesImagenSeleccionada = Files.readAllBytes(file.toPath());
-
-                // Muestra la imagen temporalmente leyendo la ruta local
                 imgPortada.setImage(new Image(file.toURI().toString()));
-
             } catch (Exception e) {
                 mostrarAlerta("Error", "No se pudo cargar la imagen: " + e.getMessage());
             }
@@ -99,8 +90,6 @@ public class GameFormController {
         txtTitulo.setText(v.getTitulo());
         txtDesarrollador.setText(v.getDesarrollador());
         txtAnio.setText(String.valueOf(v.getAñoLanzamiento()));
-        txtNota.setText(v.getNotaPersonal() != null ? v.getNotaPersonal() : "");
-        cbEstado.setValue(v.getEstado() != null ? v.getEstado() : "Pendiente");
 
         if (v.getGeneros() != null) {
             for (Genero g : v.getGeneros()) {
@@ -113,7 +102,6 @@ public class GameFormController {
             }
         }
 
-        // MODIFICADO: Cargar la portada desde los bytes almacenados en el objeto
         if (v.getPortada() != null && v.getPortada().length > 0) {
             bytesImagenSeleccionada = v.getPortada();
             java.io.ByteArrayInputStream bis = new java.io.ByteArrayInputStream(bytesImagenSeleccionada);
@@ -129,12 +117,8 @@ public class GameFormController {
                 v.setTitulo(txtTitulo.getText());
                 v.setDesarrollador(txtDesarrollador.getText());
                 v.setAñoLanzamiento(Integer.parseInt(txtAnio.getText()));
-                v.setNotaPersonal(txtNota.getText());
-                v.setEstado(cbEstado.getValue());
 
-                // MODIFICADO: Asigna el array de bytes de la imagen al objeto
                 v.setPortada(bytesImagenSeleccionada);
-
                 v.setGeneros(new ArrayList<>(lvGeneros.getSelectionModel().getSelectedItems()));
                 v.setPlataformas(new ArrayList<>(lvPlataformas.getSelectionModel().getSelectedItems()));
 
@@ -168,14 +152,23 @@ public class GameFormController {
         }
     }
 
-    @FXML private void handleCancelar() { cerrar(); }
+    @FXML
+    private void handleCancelar() {
+        cerrar();
+    }
 
-    private void cerrar() { ((Stage) txtTitulo.getScene().getWindow()).close(); }
+    private void cerrar() {
+        ((Stage) txtTitulo.getScene().getWindow()).close();
+    }
 
-    public boolean isOperacionExitosa() { return operacionExitosa; }
+    public boolean isOperacionExitosa() {
+        return operacionExitosa;
+    }
 
     private void mostrarAlerta(String t, String c) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle(t); a.setContentText(c); a.showAndWait();
+        a.setTitle(t);
+        a.setContentText(c);
+        a.showAndWait();
     }
 }
