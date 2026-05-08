@@ -38,7 +38,7 @@ public class MainController {
     private void configurarColumnas() {
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colDesarrollador.setCellValueFactory(new PropertyValueFactory<>("desarrollador"));
-        colAnio.setCellValueFactory(new PropertyValueFactory<>("añoLanzamiento"));
+        colAnio.setCellValueFactory(cd -> new javafx.beans.property.SimpleIntegerProperty(cd.getValue().getAñoLanzamiento()).asObject());
         colNota.setCellValueFactory(new PropertyValueFactory<>("notaPersonal"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
@@ -87,9 +87,8 @@ public class MainController {
 
     private void mostrarFormulario(Videojuego v) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GameForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/GameFormView.fxml"));
             Parent root = loader.load();
-
             GameFormController controller = loader.getController();
             if (v != null) controller.setJuego(v);
 

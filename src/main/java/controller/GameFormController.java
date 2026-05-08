@@ -43,6 +43,16 @@ public class GameFormController {
         cbEstado.setValue("Pendiente");
 
         cargarCombos();
+
+        // NUEVO: Forzar que el campo del año solo acepte números
+        txtAnio.setTextFormatter(new TextFormatter<>(change -> {
+            // Si el texto que se intenta introducir es un número (o está vacío al borrar), lo permitimos
+            if (change.getText().matches("[0-9]*")) {
+                return change;
+            }
+            // Si no es un número (letras, símbolos), lo rechazamos
+            return null;
+        }));
     }
 
     private void cargarCombos() {

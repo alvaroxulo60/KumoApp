@@ -119,7 +119,7 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
     }
 
     @Override
-    public void actualizarVideojuego(Videojuego videojuego) {
+    public void actualizarVideojuego(Videojuego videojuego) throws AppException {
         String sqlUpdateBase = "UPDATE videojuego SET titulo = ?, desarrollador = ?, año_lanzamiento = ? WHERE Id_videojuego = ?";
         String sqlDeletePlat = "DELETE FROM videojuego_plataforma WHERE Id_videojuego = ?";
         String sqlInsertPlat = "INSERT INTO videojuego_plataforma (Id_videojuego, Id_plataforma) VALUES (?, ?)";
@@ -190,15 +190,37 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     @Override
     public void eliminarVideojuego(int id) throws AppException {
+        String sqlDelGen = "DELETE FROM videojuego_genero WHERE Id_videojuego = ?";
+        String sqlDelPlat = "DELETE FROM videojuego_plataforma WHERE Id_videojuego = ?";
+        String sqlDelUV = "DELETE FROM usuario_videojuego WHERE Id_videojuego = ?";
         String sqlVideojuego = "DELETE FROM videojuego WHERE Id_videojuego = ?";
-        try(Connection c = ConexionDB.getInstance();
-            PreparedStatement pr4 = c.prepareStatement(sqlVideojuego)) {
 
-            pr4.setInt(1, id);
-            pr4.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new AppException("Error: " + e.getMessage());
+        try (Connection c = ConexionDB.getInstance()) {
+            c.setAutoCommit(false); // Transacción para asegurar el borrado completo
+            try {
+                try (PreparedStatement p1 = c.prepareStatement(sqlDelGen)) {
+                    p1.setInt(1, id);
+                    p1.executeUpdate();
+                }
+                try (PreparedStatement p2 = c.prepareStatement(sqlDelPlat)) {
+                    p2.setInt(1, id);
+                    p2.executeUpdate();
+                }
+                try (PreparedStatement p3 = c.prepareStatement(sqlDelUV)) {
+                    p3.setInt(1, id);
+                    p3.executeUpdate();
+                }
+                try (PreparedStatement p4 = c.prepareStatement(sqlVideojuego)) {
+                    p4.setInt(1, id);
+                    p4.executeUpdate();
+                }
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw new AppException("Error al eliminar las dependencias del videojuego: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            throw new AppException("Error de conexión al eliminar: " + e.getMessage());
         }
     }
 
@@ -246,14 +268,5 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         v.setAñoLanzamiento(rs.getInt("año_lanzamiento"));
         return v;
     }
-
-    @Override
-    public List<Genero> obtenerTodosLosGeneros() throws AppException, SQLException {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public List<Plataforma> obtenerTodasLasPlataformas() throws AppException, SQLException {
-        return new ArrayList<>();
-    }
+    
 }
