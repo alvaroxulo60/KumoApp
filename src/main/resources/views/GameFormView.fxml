@@ -2,6 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
 
 <VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameFormController"
@@ -31,6 +32,13 @@
         <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: white;"/>
         <ComboBox fx:id="cbEstado" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="250"/>
     </GridPane>
+
+    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 10 0 10 0;">
+        <StackPane style="-fx-border-color: #3d5afe; -fx-border-width: 1;">
+            <ImageView fx:id="imgPortada" fitWidth="100" fitHeight="140" preserveRatio="false"/>
+        </StackPane>
+        <Button text="Seleccionar Portada" onAction="#handleSeleccionarPortada" style="-fx-background-color: #3d5afe; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
 
     <HBox spacing="20" alignment="CENTER">
         <Button text="CANCELAR" onAction="#handleCancelar" style="-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-weight: bold;"/>

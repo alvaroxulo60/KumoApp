@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.Genero;
@@ -33,6 +34,34 @@ public class MainController {
     public void initialize() {
         configurarColumnas();
         cargarDatos();
+
+        // Escuchar cambios en la selección de la tabla
+        tablaJuegos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                // Actualizar el título debajo de la portada
+                lblTituloSeleccionado.setText(newValue.getTitulo());
+
+                // Comprobar si el juego tiene una ruta de portada guardada
+                if (newValue.getRutaPortada() != null && !newValue.getRutaPortada().isEmpty()) {
+                    java.io.File file = new java.io.File(newValue.getRutaPortada());
+                    if (file.exists()) {
+                        // Cargar la imagen local
+                        imgPortadaMain.setImage(new javafx.scene.image.Image(file.toURI().toString()));
+                    } else {
+                        // Si la ruta existe en BD pero el archivo se borró del disco
+                        imgPortadaMain.setImage(null);
+                        lblTituloSeleccionado.setText(newValue.getTitulo() + "\n(Imagen no encontrada)");
+                    }
+                } else {
+                    // El juego no tiene portada asignada
+                    imgPortadaMain.setImage(null);
+                }
+            } else {
+                // Si no hay nada seleccionado (por ejemplo, al borrar un juego)
+                imgPortadaMain.setImage(null);
+                lblTituloSeleccionado.setText("Selecciona un juego");
+            }
+        });
     }
 
     private void configurarColumnas() {
@@ -137,4 +166,7 @@ public class MainController {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setTitle(t); a.setContentText(m); a.showAndWait();
     }
+
+    @FXML private ImageView imgPortadaMain;
+    @FXML private Label lblTituloSeleccionado;
 }

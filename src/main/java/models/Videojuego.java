@@ -11,9 +11,10 @@ public class Videojuego {
     private List<Plataforma> plataformas;
     private List<Genero> generos;
 
-    // NUEVOS CAMPOS (vienen de la relación usuario_videojuego)
-    private String notaPersonal; // <- Cambiado a String para admitir reseñas
+    // NUEVOS CAMPOS
+    private String notaPersonal;
     private String estado;
+    private String rutaPortada; // NUEVO: Ruta de la imagen de portada
 
     public Videojuego() {
     }
@@ -52,10 +53,9 @@ public class Videojuego {
     public int getAñoLanzamiento() { return añoLanzamiento; }
     public List<Plataforma> getPlataformas() { return plataformas; }
     public List<Genero> getGeneros() { return generos; }
-
-    // Nuevos Getters
     public String getNotaPersonal() { return notaPersonal; }
     public String getEstado() { return estado; }
+    public String getRutaPortada() { return rutaPortada; } // NUEVO GETTER
 
     public void setIdVideojuego(int idVideojuego) { this.idVideojuego = idVideojuego; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -63,10 +63,9 @@ public class Videojuego {
     public void setAñoLanzamiento(int añoLanzamiento) { this.añoLanzamiento = añoLanzamiento; }
     public void setPlataformas(List<Plataforma> plataforma) { this.plataformas = plataforma; }
     public void setGeneros(List<Genero> genero) { this.generos = genero; }
-
-    // Nuevos Setters
     public void setNotaPersonal(String notaPersonal) { this.notaPersonal = notaPersonal; }
     public void setEstado(String estado) { this.estado = estado; }
+    public void setRutaPortada(String rutaPortada) { this.rutaPortada = rutaPortada; } // NUEVO SETTER
 
     @Override
     public String toString() {
