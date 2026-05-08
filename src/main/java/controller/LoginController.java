@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import models.Usuario;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,9 +29,9 @@ public class LoginController {
     @FXML
     private void handleLogin() {
         String email = txtEmail.getText().trim();
-        String pass = txtPassword.getText();
+        String passPlana = txtPassword.getText();
 
-        if (email.isEmpty() || pass.isEmpty()) {
+        if (email.isEmpty() || passPlana.isEmpty()) {
             mostrarAlerta("Campos vacíos", "Introduce tus credenciales.");
             return;
         }
@@ -39,33 +40,35 @@ public class LoginController {
         try {
             List<Usuario> usuarios = userDAO.listarTodos();
 
+            // Buscamos al usuario por email y luego verificamos el hash de la contraseña
             Usuario encontrado = usuarios.stream()
-                    .filter(u -> email.equalsIgnoreCase(u.getEmail()) && pass.equals(u.getPassword()))
+                    .filter(u -> email.equalsIgnoreCase(u.getEmail()))
                     .findFirst()
                     .orElse(null);
 
-            if (encontrado != null) {
+            // BCrypt.checkpw verifica si la pass plana coincide con el hash almacenado
+            if (encontrado != null && BCrypt.checkpw(passPlana, encontrado.getPassword())) {
                 Sesion.setUsuario(encontrado);
                 App.setRoot("MainView");
             } else {
                 mostrarAlerta("Error de acceso", "Email o contraseña incorrectos.");
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Esto imprimirá el error real en la consola roja de tu IDE
+            e.printStackTrace();
             String causa = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage();
             mostrarAlerta("Fallo en la aplicación", "Error real al cargar: " + causa);
         }
     }
 
     @FXML
-    private void abrirRegistro() { // Cambiado para que funcione con el Hyperlink
+    private void abrirRegistro() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/RegisterView.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Crear Nueva Cuenta - KumoApp");
             stage.setScene(new Scene(root));
-            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // Bloquea la de atrás hasta cerrar esta
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             stage.show();
         } catch (IOException e) {
             mostrarAlerta("Error", "No se pudo cargar la pantalla de registro.");
