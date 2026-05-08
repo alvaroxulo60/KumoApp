@@ -10,10 +10,6 @@ import java.util.List;
 
 public class UsuarioDAOMysql implements UsuarioDAO {
 
-    /**
-     * Recupera todos los usuarios de la base de datos.
-     * Corregido: Ahora añade cada usuario a la lista para que el login funcione.
-     */
     @Override
     public List<Usuario> listarTodos() {
         String sql = "SELECT * FROM usuario";
@@ -24,7 +20,6 @@ public class UsuarioDAOMysql implements UsuarioDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Se utiliza el método mapear para evitar errores de nombres
                 listaUsuarios.add(mapearUsuario(rs));
             }
         } catch (SQLException | AppException e) {
@@ -33,9 +28,6 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         return listaUsuarios;
     }
 
-    /**
-     * Obtiene un usuario específico por su ID.
-     */
     @Override
     public Usuario obtenerPorId(int id) {
         String sql = "SELECT * FROM usuario WHERE Id_usuario = ?";
@@ -56,12 +48,8 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         return usuario;
     }
 
-    /**
-     * Inserta un nuevo usuario en la base de datos.
-     */
     @Override
     public void insertar(Usuario u) {
-        // Id_usuario no suele incluirse si es AUTO_INCREMENT en la BD
         String sql = "INSERT INTO usuario (username, Email, teléfono, password) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConexionDB.getInstance();
@@ -79,9 +67,6 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         }
     }
 
-    /**
-     * Actualiza los datos de un usuario existente.
-     */
     @Override
     public void actualizar(Usuario usuario) {
         String sql = "UPDATE usuario SET username = ?, Email = ?, teléfono = ?, password = ? WHERE Id_usuario = ?";
@@ -102,9 +87,6 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         }
     }
 
-    /**
-     * Elimina un usuario por su ID.
-     */
     @Override
     public void eliminar(int id) {
         String sql = "DELETE FROM usuario WHERE Id_usuario = ?";
@@ -120,10 +102,6 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         }
     }
 
-    /**
-     * Método auxiliar para convertir una fila de la BD en un objeto Usuario.
-     * Usa los nombres de columnas de tu imagen: Id_usuario, Nombre, Email, teléfono, password.
-     */
     private Usuario mapearUsuario(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(rs.getInt("Id_usuario"));
@@ -131,6 +109,7 @@ public class UsuarioDAOMysql implements UsuarioDAO {
         usuario.setEmail(rs.getString("Email"));
         usuario.setNumeroTelefono(rs.getString("teléfono"));
         usuario.setPassword(rs.getString("password"));
+        usuario.setAdmin(rs.getBoolean("es_admin")); // Aquí obtenemos si es admin de la BD
         return usuario;
     }
 }

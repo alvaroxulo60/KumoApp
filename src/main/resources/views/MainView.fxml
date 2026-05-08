@@ -40,9 +40,17 @@
     </HBox>
 
     <HBox spacing="15" alignment="CENTER">
-        <Button text="Añadir Juego" onAction="#abrirAnadir" styleClass="button"/>
-        <Button text="Editar Juego" onAction="#abrirEditar" styleClass="button"/>
-        <Button text="Eliminar Seleccionado" onAction="#eliminarJuego" styleClass="button"/>
-        <Region HBox.hgrow="ALWAYS" /> <Button text="Cerrar Sesión" onAction="#handleLogout" style="-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20;"/>
+        <Button text="Añadir a mi lista" onAction="#abrirAnadir" styleClass="button"/>
+        <Button text="Editar mi nota" onAction="#abrirEditar" styleClass="button"/>
+        <Button text="Quitar de mi lista" onAction="#eliminarJuego" styleClass="button"/>
+
+        <Region HBox.hgrow="ALWAYS" />
+
+        <Button fx:id="btnAdminCrear" text="⚙ CREAR JUEGO GLOBAL" onAction="#abrirFormularioAdmin"
+                style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;"/>
+
+        <Region HBox.hgrow="ALWAYS" />
+
+        <Button text="Cerrar Sesión" onAction="#handleLogout" style="-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20;"/>
     </HBox>
 </VBox>
