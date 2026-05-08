@@ -7,6 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import models.Usuario;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class RegisterController {
 
@@ -22,24 +23,26 @@ public class RegisterController {
         String username = txtUsername.getText().trim();
         String email = txtEmail.getText().trim();
         String telefono = txtTelefono.getText().trim();
-        String password = txtPassword.getText();
+        String passwordPlana = txtPassword.getText();
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || email.isEmpty() || passwordPlana.isEmpty()) {
             mostrarAlerta("Campos vacíos", "El usuario, email y contraseña son campos obligatorios.");
             return;
         }
 
-        // Creamos el usuario basándonos en tu modelo actual
+        // GENERAR HASH DE LA CONTRASEÑA
+        String passwordHasheada = BCrypt.hashpw(passwordPlana, BCrypt.gensalt());
+
         Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombre(username); // Mapea a 'username' en BD
+        nuevoUsuario.setNombre(username);
         nuevoUsuario.setEmail(email);
         nuevoUsuario.setNumeroTelefono(telefono);
-        nuevoUsuario.setPassword(password);
+        nuevoUsuario.setPassword(passwordHasheada); // Guardamos el hash, no el texto plano
 
         try {
             usuarioDAO.insertar(nuevoUsuario);
             mostrarAlerta("Éxito", "¡Cuenta creada correctamente! Ya puedes iniciar sesión.");
-            cerrar(); // Cierra la ventana tras registrarse
+            cerrar();
         } catch (Exception e) {
             mostrarAlerta("Error", "Ocurrió un problema al registrar: " + e.getMessage());
         }

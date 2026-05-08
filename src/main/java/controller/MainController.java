@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.Genero;
@@ -23,20 +24,40 @@ import java.util.stream.Collectors;
 
 public class MainController {
     @FXML private TableView<Videojuego> tablaJuegos;
-    // La columna Nota ahora es String
     @FXML private TableColumn<Videojuego, String> colTitulo, colDesarrollador, colGeneros, colPlataformas, colEstado, colNota;
     @FXML private TableColumn<Videojuego, Integer> colAnio;
 
     private final VideojuegoDAOMysql gameDAO = new VideojuegoDAOMysql();
 
+    @FXML private ImageView imgPortadaMain;
+    @FXML private Label lblTituloSeleccionado;
+
     @FXML
     public void initialize() {
         configurarColumnas();
         cargarDatos();
+
+        // Escuchar cambios en la selección de la tabla
+        tablaJuegos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                lblTituloSeleccionado.setText(newValue.getTitulo());
+
+                // MODIFICADO: Leer y convertir los bytes guardados en la BD en una imagen de JavaFX
+                if (newValue.getPortada() != null && newValue.getPortada().length > 0) {
+                    java.io.ByteArrayInputStream bis = new java.io.ByteArrayInputStream(newValue.getPortada());
+                    imgPortadaMain.setImage(new javafx.scene.image.Image(bis));
+                } else {
+                    // El juego no tiene portada asignada
+                    imgPortadaMain.setImage(null);
+                }
+            } else {
+                imgPortadaMain.setImage(null);
+                lblTituloSeleccionado.setText("Selecciona un juego");
+            }
+        });
     }
 
     private void configurarColumnas() {
-
         tablaJuegos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
@@ -67,7 +88,6 @@ public class MainController {
                         gameDAO.listarPorUsuario(Sesion.getUsuario().getIdUsuario())
                 ));
             } catch (AppException e) {
-                // Platform.runLater evita que la ventana crashee si hay error de carga
                 Platform.runLater(() -> mostrarAlerta("Error al cargar", "Motivo: " + e.getMessage()));
             }
         }

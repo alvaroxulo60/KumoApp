@@ -11,9 +11,9 @@ public class Videojuego {
     private List<Plataforma> plataformas;
     private List<Genero> generos;
 
-    // NUEVOS CAMPOS (vienen de la relación usuario_videojuego)
-    private String notaPersonal; // <- Cambiado a String para admitir reseñas
+    private String notaPersonal;
     private String estado;
+    private byte[] portada; // MODIFICADO: Ahora es un array de bytes para la BD
 
     public Videojuego() {
     }
@@ -52,10 +52,9 @@ public class Videojuego {
     public int getAñoLanzamiento() { return añoLanzamiento; }
     public List<Plataforma> getPlataformas() { return plataformas; }
     public List<Genero> getGeneros() { return generos; }
-
-    // Nuevos Getters
     public String getNotaPersonal() { return notaPersonal; }
     public String getEstado() { return estado; }
+    public byte[] getPortada() { return portada; } // MODIFICADO
 
     public void setIdVideojuego(int idVideojuego) { this.idVideojuego = idVideojuego; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -63,10 +62,9 @@ public class Videojuego {
     public void setAñoLanzamiento(int añoLanzamiento) { this.añoLanzamiento = añoLanzamiento; }
     public void setPlataformas(List<Plataforma> plataforma) { this.plataformas = plataforma; }
     public void setGeneros(List<Genero> genero) { this.generos = genero; }
-
-    // Nuevos Setters
     public void setNotaPersonal(String notaPersonal) { this.notaPersonal = notaPersonal; }
     public void setEstado(String estado) { this.estado = estado; }
+    public void setPortada(byte[] portada) { this.portada = portada; } // MODIFICADO
 
     @Override
     public String toString() {
