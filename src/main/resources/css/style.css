@@ -1,25 +1,62 @@
+/* style.css */
 .root {
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-base: #121212; /* Fondo casi negro */
-    -fx-control-inner-background: #1e1e1e;
+    -fx-base: #0f0f1a;
+    -fx-background-color: linear-gradient(to bottom right, #14142b, #0f0f1a);
 }
 
 .button {
-    -fx-background-color: #3d5afe; /* Azul brillante */
+    -fx-background-color: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
     -fx-text-fill: white;
-    -fx-background-radius: 5;
+    -fx-background-radius: 20;
     -fx-font-weight: bold;
+    -fx-padding: 8 20 8 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(37, 117, 252, 0.4), 10, 0, 0, 0);
 }
 
 .button:hover {
-    -fx-background-color: #536dfe;
+    -fx-background-color: linear-gradient(to right, #2575fc 0%, #6a11cb 100%);
+    -fx-effect: dropshadow(three-pass-box, rgba(106, 17, 203, 0.6), 15, 0, 0, 0);
+}
+
+.text-field, .password-field, .combo-box, .list-view {
+    -fx-background-color: #1e1e2f;
+    -fx-text-fill: white;
+    -fx-border-color: #3d5afe;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.text-field:focus, .password-field:focus {
+    -fx-border-color: #6a11cb;
+    -fx-effect: dropshadow(three-pass-box, rgba(106, 17, 203, 0.5), 10, 0, 0, 0);
 }
 
 .table-view {
-    -fx-background-radius: 10;
-    -fx-border-color: #333333;
+    -fx-background-color: transparent;
+    -fx-border-color: #3d5afe;
+    -fx-border-radius: 10;
 }
 
-.table-view .column-header {
-    -fx-background-color: #252525;
+.table-view .column-header, .table-view .column-header-background {
+    -fx-background-color: #1e1e2f;
+    -fx-text-fill: white;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: white;
+}
+
+.table-row-cell {
+    -fx-background-color: #14142b;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #1a1a36;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #3d5afe;
 }
