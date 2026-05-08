@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" alignment="CENTER" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController"
+      styleClass="root" stylesheets="@../css/style.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="PANEL DE VIDEOJUEGOS" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+
+        <TableView fx:id="tablaJuegos" HBox.hgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colTitulo" text="Título" prefWidth="200"/>
+                <TableColumn fx:id="colDesarrollador" text="Desarrollador" prefWidth="150"/>
+                <TableColumn fx:id="colAnio" text="Año" prefWidth="80"/>
+                <TableColumn fx:id="colGeneros" text="Géneros" prefWidth="150"/>
+                <TableColumn fx:id="colPlataformas" text="Plataformas" prefWidth="150"/>
+                <TableColumn fx:id="colNota" text="Nota" prefWidth="80"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="120"/>
+            </columns>
+        </TableView>
+
+        <VBox alignment="TOP_CENTER" spacing="15" minWidth="250" maxWidth="250"
+              style="-fx-background-color: #1e1e2f; -fx-border-color: #3d5afe; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 20;">
+            <Label text="Portada" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <StackPane style="-fx-border-color: #6a11cb; -fx-border-width: 2; -fx-border-radius: 5;">
+                <ImageView fx:id="imgPortadaMain" fitWidth="200" fitHeight="280" preserveRatio="false"/>
+            </StackPane>
+            <Label fx:id="lblTituloSeleccionado" text="Selecciona un juego" wrapText="true" textAlignment="CENTER" style="-fx-text-fill: #b4b4b4; -fx-font-size: 14px;"/>
+        </VBox>
+
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Añadir a mi lista" onAction="#abrirAnadir" styleClass="button"/>
+        <Button text="Editar mi nota" onAction="#abrirEditar" styleClass="button"/>
+        <Button text="Quitar de mi lista" onAction="#eliminarJuego" styleClass="button"/>
+
+        <Region HBox.hgrow="ALWAYS" />
+
+        <Button fx:id="btnAdminCrear" text="⚙ CREAR JUEGO GLOBAL" onAction="#abrirFormularioAdmin"
+                style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;"/>
+
+        <Region HBox.hgrow="ALWAYS" />
+
+        <Button text="Cerrar Sesión" onAction="#handleLogout" style="-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20;"/>
+    </HBox>
+</VBox>
