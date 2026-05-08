@@ -11,7 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView; // <-- AÑADIDO: Importación necesaria
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Genero;
@@ -20,9 +20,6 @@ import models.Videojuego;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class GameFormController {
@@ -35,9 +32,9 @@ public class GameFormController {
     @FXML private TextField txtNota;
     @FXML private ComboBox<String> cbEstado;
 
-    // <-- AÑADIDO: Declaración de las variables para la portada
     @FXML private ImageView imgPortada;
-    private String rutaImagenSeleccionada = null;
+    // MODIFICADO: Guardamos la imagen como un array de bytes
+    private byte[] bytesImagenSeleccionada = null;
 
     private final VideojuegoDAO videojuegoDAO = new VideojuegoDAOMysql();
     private final GeneroDAO generoDAO = new GeneroDAOMysql();
@@ -56,7 +53,6 @@ public class GameFormController {
 
         cargarCombos();
 
-        // Forzar que el campo del año solo acepte números
         txtAnio.setTextFormatter(new TextFormatter<>(change -> {
             if (change.getText().matches("[0-9]*")) {
                 return change;
@@ -82,23 +78,14 @@ public class GameFormController {
                 new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg")
         );
 
-        // Abre el diálogo para buscar el archivo
         File file = fileChooser.showOpenDialog(txtTitulo.getScene().getWindow());
 
         if (file != null) {
             try {
-                // Crea la carpeta "portadas" en la raíz del proyecto si no existe
-                Path carpetaDestino = Paths.get("portadas");
-                if (!Files.exists(carpetaDestino)) {
-                    Files.createDirectories(carpetaDestino);
-                }
+                // MODIFICADO: Lee los bytes de la imagen directamente para la BD
+                bytesImagenSeleccionada = Files.readAllBytes(file.toPath());
 
-                // Copia la imagen a la carpeta portadas (reemplaza si ya existe una con el mismo nombre)
-                Path destino = carpetaDestino.resolve(file.getName());
-                Files.copy(file.toPath(), destino, StandardCopyOption.REPLACE_EXISTING);
-
-                // Guarda la ruta relativa y la muestra en el ImageView
-                rutaImagenSeleccionada = destino.toString();
+                // Muestra la imagen temporalmente leyendo la ruta local
                 imgPortada.setImage(new Image(file.toURI().toString()));
 
             } catch (Exception e) {
@@ -126,13 +113,11 @@ public class GameFormController {
             }
         }
 
-        // <-- AÑADIDO: Cargar la portada en el formulario si el juego ya tiene una
-        if (v.getRutaPortada() != null && !v.getRutaPortada().isEmpty()) {
-            rutaImagenSeleccionada = v.getRutaPortada();
-            File file = new File(rutaImagenSeleccionada);
-            if (file.exists()) {
-                imgPortada.setImage(new Image(file.toURI().toString()));
-            }
+        // MODIFICADO: Cargar la portada desde los bytes almacenados en el objeto
+        if (v.getPortada() != null && v.getPortada().length > 0) {
+            bytesImagenSeleccionada = v.getPortada();
+            java.io.ByteArrayInputStream bis = new java.io.ByteArrayInputStream(bytesImagenSeleccionada);
+            imgPortada.setImage(new Image(bis));
         }
     }
 
@@ -147,8 +132,8 @@ public class GameFormController {
                 v.setNotaPersonal(txtNota.getText());
                 v.setEstado(cbEstado.getValue());
 
-                // <-- AÑADIDO: Guardar la ruta seleccionada en el objeto
-                v.setRutaPortada(rutaImagenSeleccionada);
+                // MODIFICADO: Asigna el array de bytes de la imagen al objeto
+                v.setPortada(bytesImagenSeleccionada);
 
                 v.setGeneros(new ArrayList<>(lvGeneros.getSelectionModel().getSelectedItems()));
                 v.setPlataformas(new ArrayList<>(lvPlataformas.getSelectionModel().getSelectedItems()));

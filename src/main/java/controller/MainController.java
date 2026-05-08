@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 
 public class MainController {
     @FXML private TableView<Videojuego> tablaJuegos;
-    // La columna Nota ahora es String
     @FXML private TableColumn<Videojuego, String> colTitulo, colDesarrollador, colGeneros, colPlataformas, colEstado, colNota;
     @FXML private TableColumn<Videojuego, Integer> colAnio;
 
     private final VideojuegoDAOMysql gameDAO = new VideojuegoDAOMysql();
+
+    @FXML private ImageView imgPortadaMain;
+    @FXML private Label lblTituloSeleccionado;
 
     @FXML
     public void initialize() {
@@ -38,26 +40,17 @@ public class MainController {
         // Escuchar cambios en la selección de la tabla
         tablaJuegos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                // Actualizar el título debajo de la portada
                 lblTituloSeleccionado.setText(newValue.getTitulo());
 
-                // Comprobar si el juego tiene una ruta de portada guardada
-                if (newValue.getRutaPortada() != null && !newValue.getRutaPortada().isEmpty()) {
-                    java.io.File file = new java.io.File(newValue.getRutaPortada());
-                    if (file.exists()) {
-                        // Cargar la imagen local
-                        imgPortadaMain.setImage(new javafx.scene.image.Image(file.toURI().toString()));
-                    } else {
-                        // Si la ruta existe en BD pero el archivo se borró del disco
-                        imgPortadaMain.setImage(null);
-                        lblTituloSeleccionado.setText(newValue.getTitulo() + "\n(Imagen no encontrada)");
-                    }
+                // MODIFICADO: Leer y convertir los bytes guardados en la BD en una imagen de JavaFX
+                if (newValue.getPortada() != null && newValue.getPortada().length > 0) {
+                    java.io.ByteArrayInputStream bis = new java.io.ByteArrayInputStream(newValue.getPortada());
+                    imgPortadaMain.setImage(new javafx.scene.image.Image(bis));
                 } else {
                     // El juego no tiene portada asignada
                     imgPortadaMain.setImage(null);
                 }
             } else {
-                // Si no hay nada seleccionado (por ejemplo, al borrar un juego)
                 imgPortadaMain.setImage(null);
                 lblTituloSeleccionado.setText("Selecciona un juego");
             }
@@ -65,7 +58,6 @@ public class MainController {
     }
 
     private void configurarColumnas() {
-
         tablaJuegos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
@@ -96,7 +88,6 @@ public class MainController {
                         gameDAO.listarPorUsuario(Sesion.getUsuario().getIdUsuario())
                 ));
             } catch (AppException e) {
-                // Platform.runLater evita que la ventana crashee si hay error de carga
                 Platform.runLater(() -> mostrarAlerta("Error al cargar", "Motivo: " + e.getMessage()));
             }
         }
@@ -166,7 +157,4 @@ public class MainController {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setTitle(t); a.setContentText(m); a.showAndWait();
     }
-
-    @FXML private ImageView imgPortadaMain;
-    @FXML private Label lblTituloSeleccionado;
 }

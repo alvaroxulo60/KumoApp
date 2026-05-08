@@ -11,10 +11,9 @@ public class Videojuego {
     private List<Plataforma> plataformas;
     private List<Genero> generos;
 
-    // NUEVOS CAMPOS
     private String notaPersonal;
     private String estado;
-    private String rutaPortada; // NUEVO: Ruta de la imagen de portada
+    private byte[] portada; // MODIFICADO: Ahora es un array de bytes para la BD
 
     public Videojuego() {
     }
@@ -55,7 +54,7 @@ public class Videojuego {
     public List<Genero> getGeneros() { return generos; }
     public String getNotaPersonal() { return notaPersonal; }
     public String getEstado() { return estado; }
-    public String getRutaPortada() { return rutaPortada; } // NUEVO GETTER
+    public byte[] getPortada() { return portada; } // MODIFICADO
 
     public void setIdVideojuego(int idVideojuego) { this.idVideojuego = idVideojuego; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
@@ -65,7 +64,7 @@ public class Videojuego {
     public void setGeneros(List<Genero> genero) { this.generos = genero; }
     public void setNotaPersonal(String notaPersonal) { this.notaPersonal = notaPersonal; }
     public void setEstado(String estado) { this.estado = estado; }
-    public void setRutaPortada(String rutaPortada) { this.rutaPortada = rutaPortada; } // NUEVO SETTER
+    public void setPortada(byte[] portada) { this.portada = portada; } // MODIFICADO
 
     @Override
     public String toString() {

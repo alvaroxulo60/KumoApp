@@ -20,7 +20,6 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     @Override
     public void insertar(Videojuego videojuego) throws AppException {
-        // Consulta SQL actualizada con ruta_portada
         String sqlInsertVideojuego = "INSERT INTO videojuego (titulo, desarrollador, año_lanzamiento, ruta_portada) VALUES (?, ?, ?, ?)";
         String sqlInsertPlataformas = "INSERT INTO videojuego_plataforma (Id_videojuego, Id_plataforma) VALUES (?, ?)";
         String sqlInsertGeneros = "INSERT INTO videojuego_genero (Id_videojuego, Id_genero) VALUES (?, ?)";
@@ -33,7 +32,8 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                 psJuego.setString(1, videojuego.getTitulo());
                 psJuego.setString(2, videojuego.getDesarrollador());
                 psJuego.setInt(3, videojuego.getAñoLanzamiento());
-                psJuego.setString(4, videojuego.getRutaPortada()); // NUEVO: Guardar la ruta de la imagen
+                // MODIFICADO: Guardar array de bytes en vez de String
+                psJuego.setBytes(4, videojuego.getPortada());
                 psJuego.executeUpdate();
 
                 int idGenerado = -1;
@@ -107,11 +107,8 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Videojuego v = mapearVideojuegoBasico(rs);
-
-                    // Se lee de la base de datos como String
                     v.setNotaPersonal(rs.getString("nota_personal"));
                     v.setEstado(rs.getString("estado"));
-
                     v.setGeneros(obtenerGenerosDeJuego(v.getIdVideojuego()));
                     v.setPlataformas(obtenerPlataformasDeJuego(v.getIdVideojuego()));
                     juegos.add(v);
@@ -125,7 +122,6 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
 
     @Override
     public void actualizarVideojuego(Videojuego videojuego) throws AppException {
-        // Consulta SQL de actualización incluyendo ruta_portada
         String sqlUpdateBase = "UPDATE videojuego SET titulo = ?, desarrollador = ?, año_lanzamiento = ?, ruta_portada = ? WHERE Id_videojuego = ?";
         String sqlDeletePlat = "DELETE FROM videojuego_plataforma WHERE Id_videojuego = ?";
         String sqlInsertPlat = "INSERT INTO videojuego_plataforma (Id_videojuego, Id_plataforma) VALUES (?, ?)";
@@ -140,8 +136,9 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
                     ps.setString(1, videojuego.getTitulo());
                     ps.setString(2, videojuego.getDesarrollador());
                     ps.setInt(3, videojuego.getAñoLanzamiento());
-                    ps.setString(4, videojuego.getRutaPortada()); // NUEVO: Actualizar ruta de la imagen
-                    ps.setInt(5, videojuego.getIdVideojuego()); // Índice actualizado de 4 a 5
+                    // MODIFICADO: Actualizar array de bytes
+                    ps.setBytes(4, videojuego.getPortada());
+                    ps.setInt(5, videojuego.getIdVideojuego());
                     ps.executeUpdate();
                 }
 
@@ -206,23 +203,19 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         String sqlVideojuego = "DELETE FROM videojuego WHERE Id_videojuego = ?";
 
         try (Connection c = ConexionDB.getInstance()) {
-            c.setAutoCommit(false); // Transacción para asegurar el borrado completo
+            c.setAutoCommit(false);
             try {
                 try (PreparedStatement p1 = c.prepareStatement(sqlDelGen)) {
-                    p1.setInt(1, id);
-                    p1.executeUpdate();
+                    p1.setInt(1, id); p1.executeUpdate();
                 }
                 try (PreparedStatement p2 = c.prepareStatement(sqlDelPlat)) {
-                    p2.setInt(1, id);
-                    p2.executeUpdate();
+                    p2.setInt(1, id); p2.executeUpdate();
                 }
                 try (PreparedStatement p3 = c.prepareStatement(sqlDelUV)) {
-                    p3.setInt(1, id);
-                    p3.executeUpdate();
+                    p3.setInt(1, id); p3.executeUpdate();
                 }
                 try (PreparedStatement p4 = c.prepareStatement(sqlVideojuego)) {
-                    p4.setInt(1, id);
-                    p4.executeUpdate();
+                    p4.setInt(1, id); p4.executeUpdate();
                 }
                 c.commit();
             } catch (SQLException e) {
@@ -276,8 +269,8 @@ public class VideojuegoDAOMysql implements VideojuegoDAO {
         v.setTitulo(rs.getString("titulo"));
         v.setDesarrollador(rs.getString("desarrollador"));
         v.setAñoLanzamiento(rs.getInt("año_lanzamiento"));
-        v.setRutaPortada(rs.getString("ruta_portada")); // NUEVO: Leer la ruta de la base de datos
+        // MODIFICADO: Recuperar los bytes de la BD
+        v.setPortada(rs.getBytes("ruta_portada"));
         return v;
     }
-    
 }
